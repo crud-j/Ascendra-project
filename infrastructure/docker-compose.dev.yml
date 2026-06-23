@@ -1,0 +1,264 @@
+version: "3.9"
+
+# =============================================================================
+# Ascendra Application Services — Development Override
+#
+# Extends docker-compose.yml to also run the application containers in dev mode
+# with hot-reload via volume mounts.
+#
+# Usage (from project root):
+#   docker compose \
+#     -f infrastructure/docker-compose.yml \
+#     -f infrastructure/docker-compose.dev.yml \
+#     up --build
+#
+# In development, services run with DEBUG=true and the source directory is
+# mounted so uvicorn --reload picks up code changes without rebuilding.
+# =============================================================================
+
+networks:
+  ascendra-network:
+    driver: bridge
+
+x-service-common: &service-common
+  restart: unless-stopped
+  networks:
+    - ascendra-network
+  environment:
+    DEBUG: "true"
+    REDIS_URL: "redis://redis:6379"
+    ALLOWED_ORIGINS: '["http://localhost:3000"]'
+
+services:
+  auth-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/auth-service
+    container_name: ascendra-auth-service
+    ports:
+      - "8001:8000"
+    volumes:
+      - ../apps/services/auth-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-auth:5432/auth_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  learning-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/learning-service
+    container_name: ascendra-learning-service
+    ports:
+      - "8002:8000"
+    volumes:
+      - ../apps/services/learning-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-learning:5432/learning_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-learning:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  assessment-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/assessment-service
+    container_name: ascendra-assessment-service
+    ports:
+      - "8003:8000"
+    volumes:
+      - ../apps/services/assessment-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-assessment:5432/assessment_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-assessment:
+        condition: service_healthy
+
+  community-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/community-service
+    container_name: ascendra-community-service
+    ports:
+      - "8004:8000"
+    volumes:
+      - ../apps/services/community-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-community:5432/community_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-community:
+        condition: service_healthy
+
+  guild-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/guild-service
+    container_name: ascendra-guild-service
+    ports:
+      - "8005:8000"
+    volumes:
+      - ../apps/services/guild-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-guild:5432/guild_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-guild:
+        condition: service_healthy
+
+  mentor-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/mentor-service
+    container_name: ascendra-mentor-service
+    ports:
+      - "8006:8000"
+    volumes:
+      - ../apps/services/mentor-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-mentor:5432/mentor_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-mentor:
+        condition: service_healthy
+
+  marketplace-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/marketplace-service
+    container_name: ascendra-marketplace-service
+    ports:
+      - "8007:8000"
+    volumes:
+      - ../apps/services/marketplace-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-marketplace:5432/marketplace_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-marketplace:
+        condition: service_healthy
+
+  payment-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/payment-service
+    container_name: ascendra-payment-service
+    ports:
+      - "8008:8000"
+    volumes:
+      - ../apps/services/payment-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-payment:5432/payment_db"
+      STRIPE_SECRET_KEY: "${STRIPE_SECRET_KEY}"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-payment:
+        condition: service_healthy
+
+  blockchain-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/blockchain-service
+    container_name: ascendra-blockchain-service
+    ports:
+      - "8009:8000"
+    volumes:
+      - ../apps/services/blockchain-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-blockchain:5432/blockchain_db"
+      APTOS_NODE_URL: "${APTOS_NODE_URL:-https://fullnode.devnet.aptoslabs.com/v1}"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-blockchain:
+        condition: service_healthy
+
+  ai-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/ai-service
+    container_name: ascendra-ai-service
+    ports:
+      - "8010:8000"
+    volumes:
+      - ../apps/services/ai-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-ai:5432/ai_db"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-ai:
+        condition: service_healthy
+
+  notification-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/notification-service
+    container_name: ascendra-notification-service
+    ports:
+      - "8011:8000"
+    volumes:
+      - ../apps/services/notification-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-notification:5432/notification_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-notification:
+        condition: service_healthy
+
+  analytics-service:
+    <<: *service-common
+    build:
+      context: ../apps/services/analytics-service
+    container_name: ascendra-analytics-service
+    ports:
+      - "8012:8000"
+    volumes:
+      - ../apps/services/analytics-service:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-analytics:5432/analytics_db"
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-analytics:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+
+  economy-core:
+    <<: *service-common
+    build:
+      context: ../apps/services/economy-core
+    container_name: ascendra-economy-core
+    ports:
+      - "8013:8000"
+    volumes:
+      - ../apps/services/economy-core:/app
+    environment:
+      <<: *service-common
+      DATABASE_URL: "postgresql+asyncpg://ascendra:ascendra@postgres-economy-core:5432/economy_core_db"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres-economy-core:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

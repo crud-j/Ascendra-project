@@ -1,0 +1,1 @@
+"""analytics-service Pydantic schemas."""

@@ -1,0 +1,1 @@
+"""ai-service database models."""

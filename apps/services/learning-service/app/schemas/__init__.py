@@ -1,0 +1,1 @@
+"""learning-service Pydantic schemas."""

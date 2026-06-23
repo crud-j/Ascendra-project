@@ -1,0 +1,1 @@
+"""marketplace-service database models."""

@@ -1,0 +1,220 @@
+version: "3.9"
+
+# =============================================================================
+# Ascendra Local Development Infrastructure
+#
+# Starts all 13 service databases (one per service — database-per-service, ADR-005),
+# a single Redis instance, and a single-node Elasticsearch for search/feeds.
+#
+# Usage:
+#   docker compose -f infrastructure/docker-compose.yml up -d
+#
+# All services connect via the ascendra-network bridge.
+# PostgreSQL superuser: ascendra / ascendra
+# =============================================================================
+
+networks:
+  ascendra-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+
+x-postgres-common: &postgres-common
+  image: postgres:16-alpine
+  environment:
+    POSTGRES_USER: ascendra
+    POSTGRES_PASSWORD: ascendra
+  networks:
+    - ascendra-network
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ascendra"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
+services:
+  # ---------------------------------------------------------------------------
+  # Databases — one per service (ADR-005: database-per-service)
+  # ---------------------------------------------------------------------------
+  postgres-auth:
+    <<: *postgres-common
+    container_name: ascendra-postgres-auth
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  postgres-learning:
+    <<: *postgres-common
+    container_name: ascendra-postgres-learning
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: learning_db
+    ports:
+      - "5433:5432"
+
+  postgres-assessment:
+    <<: *postgres-common
+    container_name: ascendra-postgres-assessment
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: assessment_db
+    ports:
+      - "5434:5432"
+
+  postgres-community:
+    <<: *postgres-common
+    container_name: ascendra-postgres-community
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: community_db
+    ports:
+      - "5435:5432"
+
+  postgres-guild:
+    <<: *postgres-common
+    container_name: ascendra-postgres-guild
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: guild_db
+    ports:
+      - "5436:5432"
+
+  postgres-mentor:
+    <<: *postgres-common
+    container_name: ascendra-postgres-mentor
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: mentor_db
+    ports:
+      - "5437:5432"
+
+  postgres-marketplace:
+    <<: *postgres-common
+    container_name: ascendra-postgres-marketplace
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: marketplace_db
+    ports:
+      - "5438:5432"
+
+  postgres-payment:
+    <<: *postgres-common
+    container_name: ascendra-postgres-payment
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: payment_db
+    ports:
+      - "5439:5432"
+
+  postgres-blockchain:
+    <<: *postgres-common
+    container_name: ascendra-postgres-blockchain
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: blockchain_db
+    ports:
+      - "5440:5432"
+
+  postgres-ai:
+    <<: *postgres-common
+    container_name: ascendra-postgres-ai
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: ai_db
+    ports:
+      - "5441:5432"
+
+  postgres-notification:
+    <<: *postgres-common
+    container_name: ascendra-postgres-notification
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: notification_db
+    ports:
+      - "5442:5432"
+
+  postgres-analytics:
+    <<: *postgres-common
+    container_name: ascendra-postgres-analytics
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: analytics_db
+    ports:
+      - "5443:5432"
+
+  postgres-economy-core:
+    <<: *postgres-common
+    container_name: ascendra-postgres-economy-core
+    environment:
+      POSTGRES_USER: ascendra
+      POSTGRES_PASSWORD: ascendra
+      POSTGRES_DB: economy_core_db
+    ports:
+      - "5444:5432"
+
+  # ---------------------------------------------------------------------------
+  # Redis 7 — caching, locks, rate limiting, lightweight queues
+  # Single instance for local dev. Production uses Redis Cluster.
+  # NEVER authoritative for durable economic state.
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: ascendra-redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ascendra-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Elasticsearch 8.15 — search, feeds, leaderboards (derived read models)
+  # Single node for local dev. Never written to as source of truth.
+  # ---------------------------------------------------------------------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: ascendra-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - ascendra-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

@@ -1,0 +1,1 @@
+"""guild-service Pydantic schemas."""

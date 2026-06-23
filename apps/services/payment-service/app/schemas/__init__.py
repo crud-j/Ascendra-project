@@ -1,0 +1,1 @@
+"""payment-service Pydantic schemas."""

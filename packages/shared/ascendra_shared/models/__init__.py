@@ -1,0 +1,5 @@
+"""Shared SQLAlchemy base models."""
+
+from .base import TimestampedModel
+
+__all__ = ["TimestampedModel"]
