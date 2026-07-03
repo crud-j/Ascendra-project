@@ -10,7 +10,7 @@ let opened = false;
 const next = spawn(
   /^win/.test(process.platform) ? "next.cmd" : "next",
   ["dev", "--turbopack", "--port", String(PORT)],
-  { stdio: ["inherit", "pipe", "pipe"], shell: false }
+  { stdio: ["inherit", "pipe", "pipe"], shell: process.platform === "win32" }
 );
 
 function tryOpen(data) {

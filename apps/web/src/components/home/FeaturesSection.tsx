@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView, type Variants } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useInView, useScroll, useMotionValueEvent, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const features = [
@@ -12,7 +12,7 @@ const features = [
     accent: "#3B82F6",
     borderGradient: "from-blue-400 to-blue-600",
     iconBg: "bg-blue-50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(59,130,246,0.10) 0%, transparent 70%)",
+    glowBg: "radial-gradient(ellipse at top left, rgba(59,130,246,0.06) 0%, transparent 70%)",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-blue-500">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -26,7 +26,7 @@ const features = [
     accent: "#8B5CF6",
     borderGradient: "from-violet-400 to-violet-600",
     iconBg: "bg-violet-50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(139,92,246,0.10) 0%, transparent 70%)",
+    glowBg: "radial-gradient(ellipse at top left, rgba(139,92,246,0.06) 0%, transparent 70%)",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-violet-500">
         <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
@@ -40,7 +40,7 @@ const features = [
     accent: "#10B981",
     borderGradient: "from-emerald-400 to-emerald-600",
     iconBg: "bg-emerald-50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(16,185,129,0.10) 0%, transparent 70%)",
+    glowBg: "radial-gradient(ellipse at top left, rgba(16,185,129,0.06) 0%, transparent 70%)",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-emerald-500">
         <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
@@ -54,7 +54,7 @@ const features = [
     accent: "#F59E0B",
     borderGradient: "from-amber-400 to-amber-600",
     iconBg: "bg-amber-50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(245,158,11,0.10) 0%, transparent 70%)",
+    glowBg: "radial-gradient(ellipse at top left, rgba(245,158,11,0.06) 0%, transparent 70%)",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-amber-500">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -63,225 +63,228 @@ const features = [
   },
 ];
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 32, filter: "blur(8px)" },
-  visible: {
-    opacity: 1, y: 0, filter: "blur(0px)",
-    transition: { duration: 0.75, ease: "easeOut" },
-  },
-};
-
+// Refined animation variants for a smoother, premium feel
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.05 } },
+  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
 };
 
 const cardVariant: Variants = {
-  hidden: { opacity: 0, y: 52, filter: "blur(12px)" },
+  hidden: { opacity: 0, scale: 0.96, filter: "blur(4px)", y: 20 },
   visible: {
-    opacity: 1, y: 0, filter: "blur(0px)",
-    transition: { duration: 0.85, ease: "easeOut" },
+    opacity: 1, scale: 1, filter: "blur(0px)", y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+const headerVariant: Variants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1, x: 0,
+    transition: { duration: 0.8, ease: "easeOut" },
   },
 };
 
 export function FeaturesSection() {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const headerInView = useInView(headerRef, { once: true, amount: 0.3 });
-  const cardsInView = useInView(cardsRef, { once: true, amount: 0.15 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.15 });
+  const [isSticky, setIsSticky] = useState(false);
+
+  // Track the vertical scroll position of the section to manage the sticky UI state dynamically
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    // "start 100px": When the top of the section reaches 100px from the top of the viewport
+    // "end 100px": When the bottom of the section passes 100px from the top of the viewport
+    offset: ["start 100px", "end 100px"] 
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // 0 = section top hasn't reached offset. 1 = section bottom has passed offset.
+    setIsSticky(latest > 0 && latest < 1);
+  });
 
   return (
-    <section className="relative overflow-hidden bg-white px-6 py-28 lg:py-36">
-      {/* Top hairline */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
-      {/* Decorative background blobs */}
-      <div
-        className="pointer-events-none absolute -top-32 left-1/4 h-[600px] w-[600px] -translate-x-1/2 rounded-full opacity-40"
-        style={{ background: "radial-gradient(circle, rgba(193,149,98,0.06) 0%, transparent 70%)", filter: "blur(80px)" }}
+    <section 
+      ref={containerRef}
+      className="relative overflow-hidden bg-[#FAFAFA] py-24 sm:py-32"
+    >
+      {/* Premium subtle dot pattern mimicking the reference background */}
+      <div 
+        className="pointer-events-none absolute right-0 top-0 h-full w-[800px] opacity-[0.15]"
+        style={{ 
+          backgroundImage: 'radial-gradient(#9CA3AF 1px, transparent 1px)', 
+          backgroundSize: '24px 24px',
+          maskImage: 'radial-gradient(ellipse at top right, black 20%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at top right, black 20%, transparent 70%)'
+        }}
       />
-      <div
-        className="pointer-events-none absolute bottom-0 right-0 h-[500px] w-[500px] translate-x-1/4 translate-y-1/4 rounded-full opacity-30"
-        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)", filter: "blur(80px)" }}
-      />
 
-      <div className="relative z-10 mx-auto max-w-7xl">
-
-        {/* ── Header ── */}
-        <motion.div
-          ref={headerRef}
-          variants={stagger}
-          initial="hidden"
-          animate={headerInView ? "visible" : "hidden"}
-          className="mb-20 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
-        >
-          <div>
-            {/* Section label */}
-            <motion.div variants={fadeUp} className="mb-7 flex items-center gap-3">
-              <div className="h-px w-8 bg-gradient-to-r from-[#C19562] to-[#FCE8C0]" />
-              <span
-                className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#C19562]"
-                style={{ fontFamily: "var(--font-sora)" }}
-              >
-                The Ascendra Way
-              </span>
-            </motion.div>
-
-            <motion.h2
-              variants={fadeUp}
-              className="max-w-2xl text-4xl font-extrabold leading-[1.08] tracking-[-0.03em] text-gray-900 sm:text-5xl lg:text-[3.5rem]"
-              style={{ fontFamily: "var(--font-plus-jakarta)" }}
-            >
-              Four steps.
-              <br />
-              <span className="bg-gradient-to-r from-gray-300 to-gray-400 bg-clip-text text-transparent">
-                One compounding loop.
-              </span>
-            </motion.h2>
-          </div>
-
-          <motion.p
-            variants={fadeUp}
-            className="max-w-xs text-[15px] leading-[1.82] text-gray-400 lg:text-right"
-            style={{ fontFamily: "var(--font-plus-jakarta)" }}
+      <div className="mx-auto flex max-w-7xl flex-col xl:flex-row xl:items-stretch gap-12 px-6 lg:px-8">
+        
+        {/* ── Left Column: Sticky Header ── */}
+        {/* Outer wrapper allows the flex child to stretch the full height of the section */}
+        <div className="xl:w-[320px] flex-shrink-0 relative">
+          
+          {/* Inner motion div acts as the sticky element within the stretched parent */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="xl:sticky xl:top-[100px] flex flex-col gap-10 xl:gap-[120px] py-2 z-10"
           >
-            Every action feeds back into the system. Learning builds skills,
-            skills unlock opportunities, opportunities earn coins, coins fund
-            more learning.
-          </motion.p>
-        </motion.div>
+            {/* Visual indicator (vertical line) when sticky is active */}
+            <motion.div
+              initial={false}
+              animate={{ 
+                opacity: isSticky ? 1 : 0, 
+                scaleY: isSticky ? 1 : 0.4
+              }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="absolute -left-6 top-3 bottom-0 w-[3px] rounded-full bg-blue-500 origin-top hidden xl:block"
+            />
 
-        {/* ── Cards ── */}
+            <div>
+              <motion.h2 
+                variants={headerVariant}
+                className={cn(
+                  "text-[4rem] sm:text-[5rem] font-medium leading-[1.05] tracking-tight flex items-end gap-3 mb-10 transition-colors duration-500",
+                  isSticky ? "text-blue-950" : "text-gray-950"
+                )}
+              >
+                What We Do
+                {/* Corner-down arrow matching reference */}
+                <svg className={cn("mb-2 h-8 w-8 transition-colors duration-500", isSticky ? "text-blue-950" : "text-gray-950")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5h7a2 2 0 012 2v7M18 14l-6 6-6-6" />
+                </svg>
+              </motion.h2>
+
+              <motion.button 
+                variants={headerVariant}
+                className="group flex items-center gap-3 rounded-full border border-gray-300 bg-transparent px-5 py-2.5 text-sm font-medium text-gray-900 transition-all hover:bg-gray-900 hover:text-white"
+              >
+                About Us
+                <svg className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M7 7h10v10" />
+                </svg>
+              </motion.button>
+            </div>
+
+            {/* Subtext anchored below in desktop layout via gap spacing */}
+            <motion.div variants={headerVariant} className="mt-4 xl:mt-0">
+              <p className="max-w-[240px] text-[13px] leading-relaxed text-gray-400">
+                Design, Develop And Run Any Business Software You Need.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* ── Right Column: Horizontal Scroller / Grid ── */}
+        {/* Uses flex horizontal scrolling on desktop to replicate the reference's row structure perfectly */}
         <motion.div
-          ref={cardsRef}
           variants={stagger}
           initial="hidden"
-          animate={cardsInView ? "visible" : "hidden"}
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          animate={isInView ? "visible" : "hidden"}
+          className="flex-1 flex gap-6 overflow-x-auto pb-8 pt-2 xl:pt-0 snap-x snap-mandatory scrollbar-hide"
+          style={{ scrollbarWidth: 'none' }} // Firefox hidden scrollbar
         >
-          {features.map((f, i) => (
-            <motion.div
-              key={f.number}
-              variants={cardVariant}
-              whileHover={{ y: -8, transition: { duration: 0.25, ease: "easeOut" } }}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 shadow-sm"
-              style={{
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
-              }}
-            >
-              {/* Hover glow background */}
+          {features.map((f, i) => {
+            const isHeroCard = i === 0;
+
+            return (
               <motion.div
-                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                style={{ background: f.glowBg }}
-              />
-
-              {/* Animated top border */}
-              <div className="absolute left-0 right-0 top-0 h-[3px] overflow-hidden rounded-t-2xl">
-                <motion.div
-                  className={cn("h-full w-full bg-gradient-to-r", f.borderGradient)}
-                  initial={{ scaleX: 0, originX: 0 }}
-                  animate={cardsInView ? { scaleX: 1 } : { scaleX: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 + i * 0.12, ease: "easeOut" }}
-                />
-              </div>
-
-              {/* Connecting arrow between cards (desktop only) */}
-              {i < features.length - 1 && (
-                <motion.div
-                  className="pointer-events-none absolute -right-3 top-[2.4rem] z-20 hidden items-center lg:flex"
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={cardsInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ delay: 0.6 + i * 0.12, duration: 0.4 }}
-                >
-                  <div className="h-px w-4 bg-gradient-to-r from-gray-200 to-transparent" />
-                  <svg className="h-3 w-3 -ml-0.5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 5l7 7-7 7" strokeWidth={2.5} stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </motion.div>
-              )}
-
-              {/* Background number */}
-              <span
-                className="pointer-events-none absolute right-4 top-3 select-none text-[5rem] font-black leading-none text-gray-900/[0.025] transition-colors duration-500 group-hover:text-gray-900/[0.04]"
-                style={{ fontFamily: "var(--font-plus-jakarta)" }}
-                aria-hidden
+                key={f.number}
+                variants={cardVariant}
+                whileHover={{ 
+                  y: -6, 
+                  boxShadow: "0 25px 50px -12px rgba(0,0,0,0.06)",
+                  transition: { duration: 0.3, ease: "easeOut" } 
+                }}
+                className={cn(
+                  "group relative flex flex-col overflow-hidden rounded-[2rem] bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] border border-gray-100/60 w-[300px] sm:w-[340px] flex-shrink-0 snap-start transition-all will-change-transform",
+                  isHeroCard ? "p-2" : "p-8"
+                )}
               >
-                {f.number}
-              </span>
-
-              {/* Content */}
-              <div className="relative z-10 flex h-full flex-col">
-                {/* Icon */}
-                <div className={cn("mb-6 flex h-11 w-11 items-center justify-center rounded-xl shadow-sm", f.iconBg)}>
-                  {f.icon}
-                </div>
-
-                {/* Step badge */}
-                <span
-                  className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em]"
-                  style={{ color: f.accent, fontFamily: "var(--font-sora)" }}
-                >
-                  Step {f.number}
-                </span>
-
-                <h3
-                  className="text-[18px] font-bold tracking-tight text-gray-900"
-                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
-                >
-                  {f.title}
-                </h3>
-
-                <p
-                  className="mt-3 flex-1 text-[13.5px] leading-[1.78] text-gray-400 transition-colors duration-300 group-hover:text-gray-600"
-                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
-                >
-                  {f.body}
-                </p>
-
-                {/* Explore footer */}
+                {/* Ambient Hover Glow (Preserves user's brand colors gracefully) */}
                 <div
-                  className="mt-8 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300 transition-all duration-300 group-hover:gap-3 group-hover:text-[#C19562]"
-                  style={{ fontFamily: "var(--font-sora)" }}
-                >
-                  <span>Explore</span>
-                  <svg className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </div>
-              </div>
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  style={{ background: f.glowBg }}
+                />
 
-              {/* Hover shadow overlay */}
-              <motion.div
-                className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                style={{ boxShadow: `0 20px 60px -12px ${f.accent}22, 0 8px 24px -4px rgba(0,0,0,0.08)` }}
-              />
-            </motion.div>
-          ))}
+                {isHeroCard ? (
+                  // ── Hero Card Design (Card 1) ──
+                  <>
+                    <motion.div 
+                      initial={{ height: "4rem" }}
+                      animate={isInView ? { height: "15rem" } : {}}
+                      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                      className="relative w-full rounded-[1.5rem] bg-gradient-to-br from-[#3B82F6] via-[#2563EB] to-[#1D4ED8] p-6 text-white overflow-hidden flex flex-col justify-end"
+                    >
+                      {/* Abstract geometric background to simulate the "Blocks" from reference */}
+                      <div className="absolute inset-0 opacity-30">
+                        <div className="absolute -top-10 -left-10 h-40 w-40 rotate-12 rounded-2xl bg-white/20 backdrop-blur-3xl" />
+                        <div className="absolute bottom-0 right-10 h-32 w-32 -rotate-12 rounded-2xl bg-white/10 backdrop-blur-xl" />
+                      </div>
+
+                      {/* Top-Right "Folded Paper / Cutout" Effect */}
+                      <div className="absolute top-0 right-0 h-[72px] w-[72px] rounded-bl-[1.5rem] bg-white z-20 flex items-start justify-end p-2">
+                        {/* CSS trick to create smooth inverted corners connecting the white box to the blue container */}
+                        <div className="absolute -left-4 top-0 h-4 w-4 rounded-tr-full bg-transparent shadow-[5px_-5px_0_5px_white]" />
+                        <div className="absolute -bottom-4 right-0 h-4 w-4 rounded-tr-full bg-transparent shadow-[5px_-5px_0_5px_white]" />
+                        
+                        {/* Original Icon placed in the cutout */}
+                        <div className="relative z-30 h-10 w-10 flex items-center justify-center rounded-xl bg-blue-600 shadow-md text-white transition-transform duration-500 group-hover:scale-110">
+                           {f.icon}
+                        </div>
+                      </div>
+
+                      {/* Image Text */}
+                      <h3 className="relative z-10 w-4/5 text-[22px] font-medium leading-[1.2] tracking-tight text-white mb-2">
+                        Building Your {f.title} Journey
+                      </h3>
+                    </motion.div>
+                    
+                    <div className="flex flex-1 flex-col px-5 py-6">
+                      <div className="mb-5 h-px w-6 bg-gray-200" />
+                      <p className="text-[13.5px] leading-relaxed text-gray-500">
+                        {f.body}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  // ── Standard Card Design (Cards 2-4) ──
+                  <>
+                    <div className="relative z-10 flex flex-1 flex-col">
+                      <h3 className="mb-5 text-[20px] font-medium tracking-tight text-gray-900">
+                        {f.title}
+                      </h3>
+                      <div className="mb-5 h-px w-6 bg-gray-200 transition-all duration-300 group-hover:w-10 group-hover:bg-gray-300" />
+                      <p className="text-[13.5px] leading-[1.8] text-gray-500">
+                        {f.body}
+                      </p>
+                    </div>
+                    
+                    <div className="relative z-10 mt-10">
+                      <div className={cn(
+                        "flex h-10 w-10 items-center justify-center rounded-full border border-gray-100/50 shadow-sm transition-transform duration-300 group-hover:scale-110",
+                        f.iconBg
+                      )}>
+                        {f.icon}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </motion.div>
+            );
+          })}
         </motion.div>
-
-        {/* ── Loop indicator ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={cardsInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 1.0, duration: 0.6, ease: "easeOut" }}
-          className="mt-14 flex items-center justify-center gap-3"
-        >
-          <div className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-transparent to-gray-200" />
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-gray-100 bg-gray-50 px-5 py-2 shadow-sm">
-            <svg className="h-3.5 w-3.5 text-[#C19562]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <span
-              className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-400"
-              style={{ fontFamily: "var(--font-sora)" }}
-            >
-              The loop repeats — compounding your growth
-            </span>
-          </div>
-          <div className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent to-gray-200" />
-        </motion.div>
-
       </div>
+
+      {/* Global styles to hide scrollbar for webkit (since Tailwind `scrollbar-hide` requires a plugin) */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+      `}} />
     </section>
   );
 }
