@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/shared/navbar";
 import { Sidebar } from "@/components/shared/sidebar";
+import { MainContent } from "@/components/shared/main-content";
 
 export default function DashboardLayout({
   children,
@@ -7,14 +8,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="flex">
         <Sidebar />
-        {/* Main content area shifts right to make room for sidebar */}
-        <main className="ml-14 flex-1 p-6 transition-all duration-200 lg:ml-56">
-          {children}
-        </main>
+        <MainContent>{children}</MainContent>
       </div>
     </div>
   );

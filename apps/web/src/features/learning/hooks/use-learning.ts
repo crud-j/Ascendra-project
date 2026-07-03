@@ -28,13 +28,22 @@ export function useLessons(courseId: string) {
   });
 }
 
+export function useEnroll() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) => learningApi.enroll(courseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+}
+
 export function useCompleteLesson() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (lessonId: string) => learningApi.completeLesson(lessonId),
     onSuccess: () => {
-      // Invalidate economy snapshot so the XP bar refreshes
       queryClient.invalidateQueries({ queryKey: ["economy"] });
     },
   });

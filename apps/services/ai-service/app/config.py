@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
     SECRET_KEY: str = "change-me-in-production"
+    OPENAI_API_KEY: str = ""
 
     class Config:
         env_file = ".env"

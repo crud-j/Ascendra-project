@@ -31,7 +31,8 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-14 z-40 flex h-[calc(100vh-3.5rem)] flex-col border-r bg-background transition-all duration-200",
+        "fixed left-0 top-14 z-40 flex h-[calc(100vh-3.5rem)] flex-col border-r bg-background",
+        "transition-[width] duration-300 ease-in-out overflow-hidden",
         sidebarOpen ? "w-56" : "w-14"
       )}
     >
@@ -55,7 +56,12 @@ export function Sidebar() {
               )}
             >
               <Icon className="h-5 w-5 shrink-0" />
-              {sidebarOpen && <span>{label}</span>}
+              <span className={cn(
+                "whitespace-nowrap transition-[opacity,max-width] duration-300 ease-in-out overflow-hidden",
+                sidebarOpen ? "max-w-[160px] opacity-100" : "max-w-0 opacity-0"
+              )}>
+                {label}
+              </span>
             </Link>
           );
         })}

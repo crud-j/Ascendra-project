@@ -2,6 +2,7 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
+from app.routers.courses import router as courses_router
 
 logger = structlog.get_logger()
 
@@ -20,6 +21,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(courses_router)
+
 
 @app.on_event("startup")
 async def on_startup() -> None:
@@ -33,5 +36,4 @@ async def on_shutdown() -> None:
 
 @app.get("/health", tags=["ops"])
 async def health():
-    """Liveness probe. Returns 200 when the service is running."""
     return {"status": "ok", "service": settings.SERVICE_NAME}
