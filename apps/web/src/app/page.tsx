@@ -5,6 +5,7 @@ import { JourneySection } from "@/components/home/JourneySection";
 import { CoursesSection } from "@/components/home/CoursesSection";
 import { CtaSection } from "@/components/home/CtaSection";
 import { TestimonialSection } from "@/components/home/TestimonialSection";
+import { MentorSection } from "@/components/home/MentorSection";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import StaggeredFAQSection from "@/components/home/staggered-faq-section";
 
@@ -66,6 +67,7 @@ export default function Home() {
       />
       <CtaSection />
       <TestimonialSection />
+      <MentorSection />
       <SiteFooter />
     </div>
   );

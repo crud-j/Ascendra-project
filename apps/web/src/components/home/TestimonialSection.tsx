@@ -157,6 +157,7 @@ export function TestimonialSection({
 
   return (
     <section
+      data-section="testimonial"
       className={cn(
         "relative w-full flex flex-col items-center justify-center overflow-hidden py-16 md:py-24 2xl:py-32 select-none focus:outline-none",
         className

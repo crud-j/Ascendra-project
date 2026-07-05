@@ -182,17 +182,36 @@ ListItem.displayName = "ListItem";
 
 // --- Navbar ---
 
+// ─── Theme zones ──────────────────────────────────────────────────────────────
+// "dark"     → hero (dark bg)
+// "light"    → features + economy (near-white bg)
+// "journey"  → journey section through FAQ (sky-blue → deep navy)
+// "charcoal" → testimonial + mentor (very dark #18181C)
+type NavTheme = "dark" | "light" | "journey" | "charcoal";
+
 export function AscendraNavbar() {
-  const [isLight, setIsLight] = React.useState(false);
+  const [theme, setTheme] = React.useState<NavTheme>("dark");
 
   React.useEffect(() => {
+    const NAV_BOTTOM = 80; // px from viewport top where navbar bottom sits
+
     const onScroll = () => {
-      const heroEl = document.querySelector('[data-section="hero"]');
-      if (heroEl) {
-        const rect = heroEl.getBoundingClientRect();
-        setIsLight(rect.bottom < 80);
+      const hero        = document.querySelector('[data-section="hero"]');
+      const journey     = document.querySelector('[data-section="journey"]');
+      const testimonial = document.querySelector('[data-section="testimonial"]');
+
+      const heroBottom        = hero?.getBoundingClientRect().bottom        ?? -Infinity;
+      const journeyTop        = journey?.getBoundingClientRect().top        ??  Infinity;
+      const testimonialTop    = testimonial?.getBoundingClientRect().top    ??  Infinity;
+
+      if (heroBottom > NAV_BOTTOM) {
+        setTheme("dark");
+      } else if (testimonialTop <= NAV_BOTTOM) {
+        setTheme("charcoal");
+      } else if (journeyTop <= NAV_BOTTOM) {
+        setTheme("journey");
       } else {
-        setIsLight(window.scrollY > 80);
+        setTheme("light");
       }
     };
 
@@ -201,45 +220,56 @@ export function AscendraNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const triggerBase = cn(
-    "transition-all duration-500",
-    isLight
-      ? "bg-transparent text-gray-600 hover:bg-black/[0.04] hover:text-gray-900 data-[state=open]:bg-black/[0.04] data-[state=open]:text-gray-900"
-      : "bg-transparent text-white/70 hover:bg-white/[0.05] hover:text-white data-[state=open]:bg-white/[0.05] data-[state=open]:text-white"
+  const isLight    = theme === "light";
+  const isJourney  = theme === "journey";
+  const isCharcoal = theme === "charcoal";
+
+  // ── Per-theme token bundles ────────────────────────────────────────────────
+
+  const navbarBg = cn(
+    "transition-[background-color,border-color,box-shadow] duration-500",
+    theme === "light"
+      ? "border border-black/[0.07] bg-white/90 backdrop-blur-xl shadow-[0_4px_24px_0_rgba(0,0,0,0.07)]"
+      : theme === "journey"
+      ? "border border-[#7FBDDA]/20 bg-[#062238]/80 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(4,30,55,0.55)]"
+      : theme === "charcoal"
+      ? "border border-white/[0.05] bg-[#0F0F11]/85 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.6)]"
+      : "border border-white/[0.08] bg-black/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]"
   );
+
+  const triggerText = {
+    light:    "text-gray-600 hover:bg-black/[0.04] hover:text-gray-900 data-[state=open]:bg-black/[0.04] data-[state=open]:text-gray-900",
+    journey:  "text-[#A8D4EA]/80 hover:bg-[#7FBDDA]/10 hover:text-[#D4EDF8] data-[state=open]:bg-[#7FBDDA]/10 data-[state=open]:text-[#D4EDF8]",
+    charcoal: "text-white/60 hover:bg-white/[0.04] hover:text-white data-[state=open]:bg-white/[0.04] data-[state=open]:text-white",
+    dark:     "text-white/70 hover:bg-white/[0.05] hover:text-white data-[state=open]:bg-white/[0.05] data-[state=open]:text-white",
+  }[theme];
+
+  const triggerBase = cn("bg-transparent transition-all duration-500", triggerText);
 
   const plainLinkBase = cn(
     navigationMenuTriggerStyle(),
-    "transition-all duration-500",
-    isLight
-      ? "bg-transparent text-gray-600 hover:bg-black/[0.04] hover:text-gray-900"
-      : "bg-transparent text-white/70 hover:bg-white/[0.05] hover:text-white"
+    "bg-transparent transition-all duration-500",
+    triggerText
   );
 
   const viewportClassName = isLight
     ? "border-black/[0.08] bg-white/95 text-gray-900 shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_16px_40px_-8px_rgba(0,0,0,0.12)]"
+    : isJourney
+    ? "border-[#7FBDDA]/15 bg-[#041E37]/95 text-white shadow-[0_0_0_1px_rgba(127,189,218,0.08),0_16px_40px_-8px_rgba(4,30,55,0.8)]"
+    : isCharcoal
+    ? "border-white/[0.05] bg-[#0F0F11]/98 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_16px_40px_-8px_rgba(0,0,0,0.9)]"
     : undefined;
 
-  // Fixed wrapper: positions the dropdown relative to the header, not the NavigationMenu root
-  // top-20 = 80px = top-4 (16px) + h-16 (64px); mt-3.5 on the viewport adds the 14px gap
   const viewportWrapperClassName = "fixed top-20 left-4 right-4 flex justify-center z-[200]";
 
   return (
     <header className="fixed top-4 left-0 right-0 z-[200] px-4">
-      <div
-        className={cn(
-          "mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl px-6",
-          "transition-[background-color,border-color,box-shadow] duration-500",
-          isLight
-            ? "border border-black/[0.07] bg-white/90 backdrop-blur-xl shadow-[0_4px_24px_0_rgba(0,0,0,0.07)]"
-            : "border border-white/[0.08] bg-black/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]"
-        )}
-      >
+      <div className={cn("mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl px-6", navbarBg)}>
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-3 transition-opacity hover:opacity-90">
           <div className={cn(
             "relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-inner transition-[background-color,border-color] duration-500",
-            isLight ? "border-black/10 bg-black/5" : "border-white/10 bg-white/5"
+            isLight ? "border-black/10 bg-black/5" : isJourney ? "border-[#7FBDDA]/20 bg-[#7FBDDA]/10" : "border-white/10 bg-white/5"
           )}>
             <Image src="/AscendraLogo.svg" alt="Ascendra" width={20} height={20}
               style={{ height: 'auto' }}
@@ -248,7 +278,11 @@ export function AscendraNavbar() {
           </div>
           <span className={cn(
             "text-lg font-semibold tracking-tight bg-gradient-to-r bg-clip-text text-transparent transition-all duration-500",
-            isLight ? "from-[#15161A] via-[#3A3D45] to-[#6B6F7A]" : "from-[#FCE8C0] via-[#C19562] to-[#A67C52]"
+            isLight
+              ? "from-[#15161A] via-[#3A3D45] to-[#6B6F7A]"
+              : isJourney
+              ? "from-[#D4EDF8] via-[#A8D4EA] to-[#7FBDDA]"
+              : "from-[#FCE8C0] via-[#C19562] to-[#A67C52]"
           )}>
             Ascendra
           </span>
@@ -266,19 +300,19 @@ export function AscendraNavbar() {
                   <div className="grid grid-cols-[260px_1fr] gap-4">
                     <div className={cn(
                       "relative flex flex-col justify-between overflow-hidden rounded-2xl border p-6 shadow-2xl",
-                      isLight ? "border-gray-200 bg-gray-50" : "border-white/[0.08] bg-[#0E0E0E]"
+                      isLight ? "border-gray-200 bg-gray-50" : isJourney ? "border-[#7FBDDA]/15 bg-[#041E37]" : "border-white/[0.08] bg-[#0E0E0E]"
                     )}>
                       <div className="absolute -top-12 -left-12 h-40 w-40 rounded-full bg-[#C19562] opacity-10 blur-[40px]" />
                       <div className="relative z-10">
                         <Image src="/AscendraLogo.svg" alt="" width={32} height={32} style={{ height: 'auto' }} className="opacity-90" />
-                        <h3 className={cn("mt-5 text-lg font-semibold", isLight ? "text-gray-800" : "text-white/90")}>
+                        <h3 className={cn("mt-5 text-lg font-semibold", isLight ? "text-gray-800" : isJourney ? "text-[#D4EDF8]/90" : "text-white/90")}>
                           Ascendra Ecosystem
                         </h3>
-                        <p className={cn("mt-2 text-sm leading-relaxed", isLight ? "text-gray-500" : "text-white/50")}>
+                        <p className={cn("mt-2 text-sm leading-relaxed", isLight ? "text-gray-500" : isJourney ? "text-[#A8D4EA]/50" : "text-white/50")}>
                           Learn → Build → Contribute → Earn.
                         </p>
                       </div>
-                      <div className={cn("relative z-10 mt-6 space-y-2.5 text-sm font-medium", isLight ? "text-gray-600" : "text-white/60")}>
+                      <div className={cn("relative z-10 mt-6 space-y-2.5 text-sm font-medium", isLight ? "text-gray-600" : isJourney ? "text-[#A8D4EA]/60" : "text-white/60")}>
                         {["Skill-based progression", "AI-assisted learning", "Mentor ecosystem", "Real opportunities"].map(f => (
                           <div key={f} className="flex items-center gap-2">
                             <div className="h-1.5 w-1.5 rounded-full bg-[#C19562]/50" />
@@ -315,11 +349,11 @@ export function AscendraNavbar() {
                   {/* Left: Featured */}
                   <div className={cn(
                     "relative w-72 shrink-0 border-r p-6 flex flex-col",
-                    isLight ? "border-gray-200 bg-gray-50" : "border-white/[0.08] bg-[#0E0E0E]/80"
+                    isLight ? "border-gray-200 bg-gray-50" : isJourney ? "border-[#7FBDDA]/12 bg-[#041E37]/90" : "border-white/[0.08] bg-[#0E0E0E]/80"
                   )}>
                     <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#C19562] opacity-[0.07] blur-[50px]" />
 
-                    <h4 className={cn("relative z-10 mb-4 text-[10px] font-bold tracking-[0.2em] uppercase", isLight ? "text-gray-400" : "text-white/40")}>
+                    <h4 className={cn("relative z-10 mb-4 text-[10px] font-bold tracking-[0.2em] uppercase", isLight ? "text-gray-400" : isJourney ? "text-[#7FBDDA]/50" : "text-white/40")}>
                       Featured
                     </h4>
 
@@ -375,7 +409,7 @@ export function AscendraNavbar() {
                             href={category.href}
                             className={cn(
                               "mb-3 flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors hover:text-[#C19562]",
-                              isLight ? "text-gray-400" : "text-white/40"
+                              isLight ? "text-gray-400" : isJourney ? "text-[#7FBDDA]/50" : "text-white/40"
                             )}
                           >
                             {category.title}
@@ -391,7 +425,7 @@ export function AscendraNavbar() {
                                     href={item.href}
                                     className={cn(
                                       "group flex w-max items-center gap-1.5 text-sm transition-all hover:translate-x-0.5",
-                                      isLight ? "text-gray-600 hover:text-gray-900" : "text-white/60 hover:text-white"
+                                      isLight ? "text-gray-600 hover:text-gray-900" : isJourney ? "text-[#A8D4EA]/60 hover:text-[#D4EDF8]" : "text-white/60 hover:text-white"
                                     )}
                                   >
                                     {item.title}
@@ -449,18 +483,20 @@ export function AscendraNavbar() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </div>
-            <span className={cn("text-xs font-medium transition-colors duration-500", isLight ? "text-gray-500" : "text-white/50")}>
+            <span className={cn("text-xs font-medium transition-colors duration-500",
+              isLight ? "text-gray-500" : isJourney ? "text-[#A8D4EA]/50" : "text-white/50")}>
               12,000+ Online
             </span>
           </div>
 
-          <div className={cn("hidden h-4 w-px md:block transition-colors duration-500", isLight ? "bg-black/10" : "bg-white/10")} />
+          <div className={cn("hidden h-4 w-px md:block transition-colors duration-500",
+            isLight ? "bg-black/10" : isJourney ? "bg-[#7FBDDA]/15" : "bg-white/10")} />
 
           <Link
             href="/login"
             className={cn(
               "text-sm font-medium transition-colors duration-500",
-              isLight ? "text-gray-700 hover:text-gray-900" : "text-white/70 hover:text-white"
+              isLight ? "text-gray-700 hover:text-gray-900" : isJourney ? "text-[#A8D4EA]/70 hover:text-[#D4EDF8]" : "text-white/70 hover:text-white"
             )}
           >
             Login

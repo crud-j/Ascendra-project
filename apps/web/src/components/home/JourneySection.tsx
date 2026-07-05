@@ -176,9 +176,10 @@ export function JourneySection() {
   return (
     <section
       ref={sectionRef}
-     className="relative overflow-hidden px-6 py-28 lg:py-36"
-style={{ background: "linear-gradient(to bottom, #7FBDDA 0%, #9DCFE8 25%, #b0d8f0 55%, #f4c97a 100%)" }}
->
+      data-section="journey"
+      className="relative overflow-hidden px-6 py-28 lg:py-36"
+      style={{ background: "linear-gradient(to bottom, #7FBDDA 0%, #9DCFE8 25%, #b0d8f0 55%, #f4c97a 100%)" }}
+    >
       {/* Keyframe CSS for mountain layers */}
       <style dangerouslySetInnerHTML={{ __html: LAYER_CSS }} />
 
