@@ -147,7 +147,7 @@ export function FeaturesSection() {
       <div className="relative mx-auto flex max-w-7xl flex-col gap-12 px-6 lg:px-8 xl:flex-row xl:items-stretch">
 
         {/* ── Left Column: Sticky Header ── */}
-        <div className="relative xl:w-[300px] xl:shrink-0">
+        <div className="relative xl:w-75 xl:shrink-0">
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -274,7 +274,7 @@ export function FeaturesSection() {
                     transition: { duration: 0.3, ease: "easeOut" },
                   }}
                   className={cn(
-                    "group relative flex w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-[2rem] border border-gray-100/60 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] will-change-transform sm:w-[320px]",
+                    "group relative flex w-75 shrink-0 snap-start flex-col overflow-hidden rounded-[2rem] border border-gray-100/60 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] will-change-transform sm:w-[320px]",
                     isHeroCard ? "p-2" : "p-8"
                   )}
                 >
@@ -290,7 +290,7 @@ export function FeaturesSection() {
                         initial={{ height: "4rem" }}
                         animate={isInView ? { height: "15rem" } : {}}
                         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-                        className="relative w-full overflow-hidden rounded-[1.5rem] bg-gradient-to-br from-[#3B82F6] via-[#2563EB] to-[#1D4ED8] p-6 text-white flex flex-col justify-end"
+                        className="relative w-full overflow-hidden rounded-[1.5rem] bg-linear-to-br from-[#3B82F6] via-[#2563EB] to-[#1D4ED8] p-6 text-white flex flex-col justify-end"
                       >
                         <div className="absolute inset-0 opacity-30">
                           <div className="absolute -left-10 -top-10 h-40 w-40 rotate-12 rounded-2xl bg-white/20 backdrop-blur-3xl" />

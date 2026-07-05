@@ -46,3 +46,7 @@ venv/
 # IDE
 .vscode/
 .idea/
+
+# Internal / Confidential — never publish
+# Contains master architecture, agent definitions, and internal tooling
+.claude/

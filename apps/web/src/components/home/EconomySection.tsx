@@ -189,12 +189,12 @@ export function EconomySection() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-[85rem] px-6 lg:px-8 z-10">
+      <div className="relative mx-auto max-w-340 px-6 lg:px-8 z-10">
 
         {/* ── Header (Completely clear of gradients) ── */}
         <div className="mb-16">
           <div className="js-eco-eyebrow mb-6 flex items-center gap-4">
-            <div className="h-[2px] w-8 rounded-full bg-[#C19562]" />
+            <div className="h-0.5 w-8 rounded-full bg-[#C19562]" />
             <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#C19562]">
               The Economy
             </span>
@@ -259,7 +259,7 @@ export function EconomySection() {
               
               {/* ── Tile 1: Main Stat Card ── */}
               <div 
-                className="group relative flex min-h-[390px] flex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-200/70 bg-gradient-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-2 lg:col-span-5 lg:row-span-2 backdrop-blur-sm"
+                className="group relative flex min-h-97.5ex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-200/70 bg-bg-linear-to-bom-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-2 lg:col-span-5 lg:row-span-2 backdrop-blur-sm"
               >
                 <div 
                   className="absolute -top-24 -right-24 h-80 w-80 rounded-full opacity-[0.08] blur-3xl transition-opacity duration-700 group-hover:opacity-[0.15]"
@@ -300,7 +300,7 @@ export function EconomySection() {
               </div>
 
               {/* ── Tile 2: Description & Philosophy ── */}
-              <div className="group flex flex-col justify-center rounded-[2rem] border border-zinc-200/70 bg-gradient-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-2 lg:col-span-7 lg:row-span-1 lg:p-10 backdrop-blur-sm">
+              <div className="group flex flex-col justify-center rounded-[2rem] border border-zinc-200/70 bg-linear-to-brom-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-2 lg:col-span-7 lg:row-span-1 lg:p-10 backdrop-blur-sm">
                 <span className="mb-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Core Objective</span>
                 <h3 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
                   {currency.tagline}
@@ -311,7 +311,7 @@ export function EconomySection() {
               </div>
 
               {/* ── Tile 3: Key Attributes ── */}
-              <div className="group rounded-[2rem] border border-zinc-200/70 bg-gradient-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-1 lg:col-span-4 lg:row-span-1 backdrop-blur-sm">
+              <div className="group rounded-[2rem] border border-zinc-200/70 bg-linear-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-1 lg:col-span-4 lg:row-span-1 backdrop-blur-sm">
                  <span className="mb-5 block text-[10px] font-bold uppercase tracking-widest text-zinc-400">Behaviors & Traits</span>
                  <ul className="flex flex-col gap-3.5">
                   {currency.attributes.map((attr, i) => (
@@ -373,7 +373,7 @@ export function EconomySection() {
   
   {/* The Inverted Bracket Shape Glow */}
   <div 
-    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[75%] rounded-t-[40px] border-t-[32px] border-x-[32px] border-b-0 blur-[45px] opacity-75"
+    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[75%] rounded-t-[40px] border-t-32 border-x-32 border-b-0 blur-[45px] opacity-75"
     style={{ borderColor: "#7FBDDA" }}
   />
 

@@ -347,12 +347,11 @@ Ascendra-project/
 │       │   │   ├── home/       # Landing page sections
 │       │   │   └── ui/         # Shared UI primitives
 │       │   └── lib/            # Utilities
-│       └── AGENTS.md           # Ascendra Architect agent rules
-├── .claude/
-│   └── agents/
-│       └── MASTER_ARCHITECTURE.md   # Full architecture specification
+│       └── AGENTS.md           # Public-facing agent configuration
 └── README.md
 ```
+
+> Internal architecture documents, agent definitions, and tooling configuration are kept in a private directory excluded from version control.
 
 ---
 
