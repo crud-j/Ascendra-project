@@ -1,11 +1,101 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
 
-gsap.registerPlugin(ScrollTrigger);
+// ─── Wind canvas ─────────────────────────────────────────────────────────────
+
+interface WindParticle {
+  x: number;
+  y: number;
+  len: number;
+  speed: number;
+  opacity: number;
+  width: number;
+  angle: number; // slight downward drift in radians
+}
+
+function WindCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const COUNT = 90;
+    const particles: WindParticle[] = Array.from({ length: COUNT }, () => ({
+      x:       Math.random() * (canvas.width + 300) - 150,
+      y:       Math.random() * canvas.height,
+      len:     40 + Math.random() * 140,
+      speed:   2.5 + Math.random() * 7,
+      opacity: 0.04 + Math.random() * 0.13,
+      width:   0.4 + Math.random() * 1.2,
+      angle:   0.015 + Math.random() * 0.025, // 1–2.5° downward
+    }));
+
+    let rafId: number;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (const p of particles) {
+        const dx = Math.cos(p.angle) * p.len;
+        const dy = Math.sin(p.angle) * p.len;
+        const x2 = p.x + dx;
+        const y2 = p.y + dy;
+
+        const grad = ctx.createLinearGradient(p.x, p.y, x2, y2);
+        grad.addColorStop(0,    `rgba(255,255,255,0)`);
+        grad.addColorStop(0.25, `rgba(255,255,255,${p.opacity})`);
+        grad.addColorStop(0.75, `rgba(255,255,255,${p.opacity})`);
+        grad.addColorStop(1,    `rgba(255,255,255,0)`);
+
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth   = p.width;
+        ctx.stroke();
+
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+
+        if (p.x > canvas.width + p.len) {
+          p.x = -p.len - Math.random() * 300;
+          p.y = Math.random() * canvas.height;
+        }
+      }
+
+      rafId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      style={{ zIndex: 6 }}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const journeySteps = [
   {
@@ -81,121 +171,40 @@ ${LAYERS.map(
 `;
 
 export function JourneySection() {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const bgRef       = useRef<HTMLDivElement>(null);
-  const overlayRef  = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const section = sectionRef.current;
-
-      // ── 1. Background reveal: blurred + scaled-up → crisp ──
-      gsap.fromTo(
-        bgRef.current,
-        { opacity: 0, scale: 1.08, filter: "blur(18px)" },
-        {
-          opacity: 1, scale: 1, filter: "blur(0px)",
-          duration: 1.6, ease: "power2.out",
-          scrollTrigger: { trigger: section, start: "top 88%", once: true },
-        }
-      );
-
-      // ── 2. Overlay scrub: near-black → semi-transparent as section scrolls in ──
-      gsap.fromTo(
-        overlayRef.current,
-        { opacity: 1 },
-        {
-          opacity: 0.55,
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "top 20%",
-            scrub: 2,
-          },
-        }
-      );
-
-      // ── 3. Header ──
-      const headers = section?.querySelectorAll<HTMLElement>(".js-journey-header");
-      if (headers?.length) {
-        gsap.fromTo(
-          headers,
-          { opacity: 0, y: 30, filter: "blur(6px)" },
-          {
-            opacity: 1, y: 0, filter: "blur(0px)",
-            duration: 1, stagger: 0.1, ease: "power3.out",
-            clearProps: "filter,transform",
-            scrollTrigger: { trigger: section, start: "top 72%", once: true },
-          }
-        );
-      }
-
-      // ── 4. Step cards ──
-      const steps = section?.querySelectorAll<HTMLElement>(".js-journey");
-      if (steps?.length) {
-        gsap.fromTo(
-          steps,
-          { opacity: 0, y: 50, filter: "blur(8px)" },
-          {
-            opacity: 1, y: 0, filter: "blur(0px)",
-            duration: 1, stagger: 0.13, ease: "power3.out",
-            clearProps: "filter,transform",
-            scrollTrigger: { trigger: section, start: "top 65%", once: true },
-          }
-        );
-      }
-
-      // ── 5. Tier chips ──
-      const chips = section?.querySelectorAll<HTMLElement>(".js-tier");
-      if (chips?.length) {
-        gsap.fromTo(
-          chips,
-          { opacity: 0, scale: 0.8, filter: "blur(4px)" },
-          {
-            opacity: 1, scale: 1, filter: "blur(0px)",
-            duration: 0.6, stagger: 0.08, ease: "back.out(1.6)",
-            clearProps: "filter,transform",
-            scrollTrigger: { trigger: chips[0], start: "top 92%", once: true },
-          }
-        );
-      }
-    });
-
-    return () => ctx.revert();
-  }, []);
+  const sectionRef = useRef<HTMLElement>(null);
 
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden px-6 py-28 lg:py-36"
-      style={{ background: "linear-gradient(to bottom, #87CEEB 0%, #b0d8f0 40%, #f4c97a 100%)" }}
-    >
+     className="relative overflow-hidden px-6 py-28 lg:py-36"
+style={{ background: "linear-gradient(to bottom, #7FBDDA 0%, #9DCFE8 25%, #b0d8f0 55%, #f4c97a 100%)" }}
+>
       {/* Keyframe CSS for mountain layers */}
       <style dangerouslySetInnerHTML={{ __html: LAYER_CSS }} />
 
       {/* ── Mountain parallax background ── */}
       <div
-        ref={bgRef}
-        className="absolute inset-0 z-0 will-change-transform"
-        style={{ willChange: "transform, opacity, filter" }}
+        className="absolute inset-0 z-0"
       >
         {LAYERS.map((l) => (
           <div key={l.id} className={`jrny-${l.id}`} />
         ))}
       </div>
 
-      {/* ── Dark gradient overlay (scrubbed by GSAP) ── */}
+      {/* ── Wind streaks ── */}
+      <WindCanvas />
+
+      {/* ── Dark gradient overlay ── */}
       <div
-        ref={overlayRef}
         className="absolute inset-0 z-10"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(10,20,40,0.92) 0%, rgba(10,20,40,0.80) 50%, rgba(5,10,20,0.88) 100%)",
+            "linear-gradient(to bottom, rgba(10,20,40,0.0) 0%, rgba(10,20,40,0.12) 40%, rgba(5,10,20,0.38) 100%)",
         }}
       />
 
       {/* ── Top divider line ── */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
 
       {/* ── Bottom fade → hand off to FAQ (#041E37) ── */}
       <div
@@ -209,20 +218,20 @@ export function JourneySection() {
         {/* Header */}
         <div className="mb-16 flex flex-col items-center text-center">
           <div className="js-journey-header mb-6 flex items-center gap-3">
-            <div className="h-px w-8 bg-[#C19562]" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#C19562]">
+            <div className="h-px w-8 bg-[#8B6A3E]" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#8B6A3E]">
               Your Journey
             </span>
-            <div className="h-px w-8 bg-[#C19562]" />
+            <div className="h-px w-8 bg-[#8B6A3E]" />
           </div>
 
-          <h2 className="js-journey-header max-w-xl text-4xl font-extrabold leading-[1.08] tracking-[-0.03em] text-white sm:text-5xl drop-shadow-lg">
+          <h2 className="js-journey-header max-w-xl text-4xl font-extrabold leading-[1.08] tracking-[-0.03em] text-[#0A1E2E] sm:text-5xl">
             From zero to master,
             <br />
-            <span className="text-white/50">on your terms.</span>
+            <span className="text-[#0A1E2E]/65">on your terms.</span>
           </h2>
 
-          <p className="js-journey-header mt-6 max-w-md text-[15px] leading-[1.75] text-white/60">
+          <p className="js-journey-header mt-6 max-w-md text-[15px] leading-[1.75] text-[#0A1E2E]/70">
             Ascendra&apos;s progression system has six reputation tiers. Each
             unlocks new privileges, higher-value bounties, and deeper
             community trust.
@@ -241,14 +250,14 @@ export function JourneySection() {
                 />
               )}
 
-              <span className="mb-4 block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#C19562]">
+              <span className="mb-4 block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8B6A3E]">
                 0{step.step}
               </span>
-              <div className="mb-3 h-px w-8 bg-white/20" />
-              <h3 className="mb-3 text-[17px] font-bold tracking-tight text-white leading-snug">
+              <div className="mb-3 h-px w-8 bg-[#0A1E2E]/25" />
+              <h3 className="mb-3 text-[17px] font-bold tracking-tight text-[#0A1E2E] leading-snug">
                 {step.title}
               </h3>
-              <p className="text-[13px] leading-[1.8] text-white/50">
+              <p className="text-[13px] leading-[1.8] text-[#0A1E2E]/70">
                 {step.body}
               </p>
             </div>
@@ -268,7 +277,7 @@ export function JourneySection() {
               {t.tier}
             </div>
           ))}
-          <div className="js-tier rounded-full border border-dashed border-white/20 px-4 py-1.5 text-[11px] font-semibold text-white/35 backdrop-blur-sm">
+          <div className="js-tier rounded-full border border-dashed border-[#0A1E2E]/30 px-4 py-1.5 text-[11px] font-semibold text-[#0A1E2E]/55 backdrop-blur-sm">
             + Unlock more
           </div>
         </div>

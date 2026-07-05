@@ -39,7 +39,7 @@ export const BlurredStagger = ({
           variants={container}
           initial="hidden"
           animate="show"
-          className="text-base leading-relaxed break-words whitespace-normal"
+          className="text-base leading-relaxed wrap-break-word whitespace-normal"
         >
           {headingText.split("").map((char, index) => (
             <motion.span

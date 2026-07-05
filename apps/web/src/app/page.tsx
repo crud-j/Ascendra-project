@@ -2,7 +2,9 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { EconomySection } from "@/components/home/EconomySection";
 import { JourneySection } from "@/components/home/JourneySection";
+import { CoursesSection } from "@/components/home/CoursesSection";
 import { CtaSection } from "@/components/home/CtaSection";
+import { TestimonialSection } from "@/components/home/TestimonialSection";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import StaggeredFAQSection from "@/components/home/staggered-faq-section";
 
@@ -52,6 +54,7 @@ export default function Home() {
       <FeaturesSection />
       <EconomySection />
       <JourneySection />
+      <CoursesSection />
       <StaggeredFAQSection
         title="FAQs"
         subtitle="Common questions about Ascendra answered."
@@ -62,6 +65,7 @@ export default function Home() {
         defaultOpen="faq-1"
       />
       <CtaSection />
+      <TestimonialSection />
       <SiteFooter />
     </div>
   );

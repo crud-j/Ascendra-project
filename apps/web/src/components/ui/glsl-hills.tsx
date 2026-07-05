@@ -1,7 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import * as THREE from 'three';
+
+// Shown when WebGL is unavailable — layered CSS gradients mimicking the hill silhouettes
+function CSSHillsFallback() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 1 }}>
+      {/* Far range */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse 160% 65% at 50% 130%, rgba(42,45,50,0.85) 0%, transparent 55%)",
+      }} />
+      {/* Left ridge */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse 120% 70% at 15% 125%, rgba(35,38,43,0.75) 0%, transparent 52%)",
+      }} />
+      {/* Right ridge */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse 110% 65% at 85% 120%, rgba(32,35,40,0.70) 0%, transparent 50%)",
+      }} />
+      {/* Foreground peak */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse 90% 80% at 50% 140%, rgba(52,56,62,0.90) 0%, transparent 52%)",
+      }} />
+      {/* Subtle silver crest shimmer */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse 60% 12% at 50% 62%, rgba(120,125,135,0.07) 0%, transparent 70%)",
+      }} />
+    </div>
+  );
+}
 
 const GLSLHills = ({
   cameraZ = 160,
@@ -13,6 +41,8 @@ const GLSLHills = ({
   speed?: number;
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // null = pending, true = WebGL running, false = unavailable (show CSS fallback)
+  const [webGLStatus, setWebGLStatus] = useState<boolean | null>(null);
 
   const handleResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
     const canvas = canvasRef.current;
@@ -202,13 +232,26 @@ const GLSLHills = ({
       }
     }
 
+    // Probe WebGL support on a throwaway canvas so the real canvas stays unbound
+    const probe = document.createElement("canvas");
+    const probeCtx = probe.getContext("webgl") ?? probe.getContext("experimental-webgl");
+    if (!probeCtx) {
+      setWebGLStatus(false);
+      return;
+    }
+
     const scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-    renderer = new THREE.WebGLRenderer({
-      canvas: canvasRef.current!,
-      antialias: false,
-      alpha: true,
-    });
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvasRef.current!,
+        antialias: false,
+        alpha: true,
+      });
+    } catch {
+      setWebGLStatus(false);
+      return;
+    }
 
     const timer = new THREE.Timer();
     const plane = new PlaneImpl();
@@ -250,6 +293,7 @@ const GLSLHills = ({
     };
 
     init();
+    setWebGLStatus(true);
 
     return () => {
       window.removeEventListener('resize', resize);
@@ -260,11 +304,17 @@ const GLSLHills = ({
   }, [cameraZ, planeSize, speed, handleResize]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 0 }}
-    />
+    <>
+      {/* CSS fallback — visible when WebGL is unavailable */}
+      {webGLStatus === false && <CSSHillsFallback />}
+
+      {/* WebGL canvas — hidden via opacity when WebGL isn't running so it never occludes content */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 1, opacity: webGLStatus === true ? 1 : 0 }}
+      />
+    </>
   );
 };
 

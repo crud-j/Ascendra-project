@@ -1,345 +1,399 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView, type Variants } from "framer-motion";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Environment } from "@react-three/drei";
-import { EffectComposer, Bloom, DepthOfField, Vignette, Noise } from "@react-three/postprocessing";
-import * as THREE from "three";
+import { useRef, useState, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
 
-// --- Data ---
+gsap.registerPlugin(ScrollTrigger);
+
+// ─── Data ───────────────────────────────────────────────────────────────────
 const currencies = [
   {
+    id: "xp",
     symbol: "XP",
     name: "Experience Points",
     tagline: "How far along am I?",
-    description: "XP only grows. Every lesson, every contribution, every milestone adds to your permanent score. It never resets.",
-    textClass: "text-blue-600",
-    bgClass: "bg-blue-50/50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(59,130,246,0.12) 0%, transparent 75%)",
-    barClass: "from-blue-400 to-blue-600",
-    barShadow: "shadow-[0_0_16px_rgba(59,130,246,0.5)]",
-    barWidth: "68%",
-    displayValue: "48,920",
+    description:
+      "XP only grows. Every lesson, every contribution, every milestone adds to your permanent score. It never resets — it's your lifelong record of growth inside Ascendra.",
+    color: "#3b82f6",
+    colorRGB: "59,130,246",
+    displayValue: 48920,
+    pct: 68,
+    trait: "Permanent · Non-transferable",
+    attributes: ["Grows with every action", "Never resets or expires", "Unlocks tier milestones"],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-blue-600">
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-6 w-6" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
       </svg>
     ),
   },
   {
+    id: "rep",
     symbol: "REP",
     name: "Reputation",
     tagline: "Should others trust me?",
-    description: "Reputation is earned through contribution and can decrease through misconduct. A live signal of your ecosystem standing.",
-    textClass: "text-violet-600",
-    bgClass: "bg-violet-50/50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(139,92,246,0.12) 0%, transparent 75%)",
-    barClass: "from-violet-400 to-violet-600",
-    barShadow: "shadow-[0_0_16px_rgba(139,92,246,0.5)]",
-    barWidth: "42%",
-    displayValue: "3,240",
+    description:
+      "Reputation is earned through contribution and can decrease through misconduct. A live signal of your ecosystem standing — dynamic, responsive, and always honest.",
+    color: "#8b5cf6",
+    colorRGB: "139,92,246",
+    displayValue: 3240,
+    pct: 42,
+    trait: "Dynamic · Bidirectional",
+    attributes: ["Community-driven score", "Responds to conduct", "Visible trust signal"],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-violet-600">
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-6 w-6" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
       </svg>
     ),
   },
   {
+    id: "sc",
     symbol: "SC",
     name: "Skill Coins",
     tagline: "What value have I created?",
-    description: "Skill Coins are real transferable value. Earn them from bounties, spend in the marketplace, or withdraw. Backed by contribution.",
-    textClass: "text-amber-600",
-    bgClass: "bg-amber-50/50",
-    glowBg: "radial-gradient(ellipse at top left, rgba(245,158,11,0.12) 0%, transparent 75%)",
-    barClass: "from-amber-400 to-amber-500",
-    barShadow: "shadow-[0_0_16px_rgba(245,158,11,0.5)]",
-    barWidth: "55%",
-    displayValue: "1,875",
+    description:
+      "Skill Coins are real transferable value. Earn them from bounties, spend in the marketplace, or withdraw. Every coin is backed by real contribution — not speculation.",
+    color: "#f59e0b",
+    colorRGB: "245,158,11",
+    displayValue: 1875,
+    pct: 55,
+    trait: "Transferable · Withdrawable",
+    attributes: ["Spendable in marketplace", "Backed by contribution", "Withdraw anytime"],
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-5 w-5 stroke-amber-600">
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth={1.75} className="h-6 w-6" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
       </svg>
     ),
   },
 ];
 
-// --- Framer Motion Variants ---
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-};
-
-// --- 3D Components ---
-
-interface TokenProps {
-  position: [number, number, number];
-  color: string;
-  type: "XP" | "REP" | "SC" | "BG";
-  index: number;
+// ─── Animated Counter ────────────────────────────────────────────────────────
+function useCounter(target: number, active: boolean) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    setValue(0);
+    const start = performance.now();
+    const duration = 1400;
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 4);
+      setValue(Math.round(eased * target));
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [target, active]);
+  return value;
 }
 
-function GlowMaterial({ color }: { color: string }) {
+// ─── SVG Arc Ring ────────────────────────────────────────────────────────────
+function ArcRing({ pct, color }: { pct: number; color: string }) {
+  const R = 72;
+  const C = 2 * Math.PI * R;
   return (
-    <meshStandardMaterial
-      color={color}
-      emissive={color}
-      emissiveIntensity={1.8}
-      roughness={0.1}
-      metalness={0.9}
-      toneMapped={false}
-    />
+    <div className="relative flex items-center justify-center">
+      <svg width="180" height="180" viewBox="0 0 180 180" style={{ transform: "rotate(-90deg)" }} className="drop-shadow-sm">
+        <circle cx="90" cy="90" r={R} fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="10" />
+        <motion.circle
+          cx="90" cy="90" r={R}
+          fill="none"
+          stroke={color}
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          initial={{ strokeDashoffset: C }}
+          animate={{ strokeDashoffset: C - (pct / 100) * C }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        />
+      </svg>
+    </div>
   );
 }
 
-function TokenGeometry({ type, color }: { type: string; color: string }) {
-  switch (type) {
-    case "XP":
-      return (
-        <group scale={1.2}>
-          <mesh>
-            <tetrahedronGeometry args={[1, 0]} />
-            <GlowMaterial color={color} />
-          </mesh>
-          <mesh rotation={[0, 0, Math.PI / 2]} scale={[-1, 1, 1]}>
-            <tetrahedronGeometry args={[1, 0]} />
-            <GlowMaterial color={color} />
-          </mesh>
-        </group>
-      );
-
-    case "REP":
-      return (
-        <group scale={1.1}>
-          <mesh>
-            <torusGeometry args={[1, 0.15, 32, 64]} />
-            <GlowMaterial color={color} />
-          </mesh>
-          <mesh position={[-0.25, -0.15, 0]} rotation={[0, 0, -Math.PI / 4]}>
-            <boxGeometry args={[0.2, 0.6, 0.2]} />
-            <GlowMaterial color={color} />
-          </mesh>
-          <mesh position={[0.2, 0.25, 0]} rotation={[0, 0, Math.PI / 4]}>
-            <boxGeometry args={[0.2, 1.2, 0.2]} />
-            <GlowMaterial color={color} />
-          </mesh>
-        </group>
-      );
-
-    case "SC":
-      return (
-        <group rotation={[Math.PI / 2.5, 0, 0]} scale={1.1}>
-          <mesh>
-            <cylinderGeometry args={[1.1, 1.1, 0.2, 64]} />
-            <GlowMaterial color={color} />
-          </mesh>
-          <mesh position={[0, 0.12, 0]}>
-            <cylinderGeometry args={[0.8, 0.8, 0.05, 64]} />
-            <GlowMaterial color={color} />
-          </mesh>
-          <mesh position={[0, -0.12, 0]}>
-            <cylinderGeometry args={[0.8, 0.8, 0.05, 64]} />
-            <GlowMaterial color={color} />
-          </mesh>
-        </group>
-      );
-
-    default:
-      return (
-        <mesh>
-          <icosahedronGeometry args={[1, 0]} />
-          <GlowMaterial color={color} />
-        </mesh>
-      );
-  }
-}
-
-function FloatingToken({ position, color, type, index }: TokenProps) {
-  const groupRef = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
-
-  // Scale down slightly on mobile to keep layout clean
-  const scale = viewport.width < 5 ? 0.6 : 1;
-  const parallaxDirection = index % 2 === 0 ? 1 : -1;
-
-  useFrame((state) => {
-    if (!groupRef.current) return;
-    
-    // Calculate global scroll progress for parallax
-    const section = document.getElementById("economy-section");
-    if (section) {
-      const rect = section.getBoundingClientRect();
-      const scrollProgress = rect.top / window.innerHeight;
-
-      // Smooth vertical parallax
-      const targetY = position[1] + scrollProgress * (2 * parallaxDirection);
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.05);
-      
-      // Continuous gentle rotation combined with scroll-based rotation
-      groupRef.current.rotation.x += 0.002;
-      groupRef.current.rotation.y += 0.003;
-      groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, scrollProgress * 1.5, 0.05);
-    }
-  });
-
-  return (
-    <group ref={groupRef} position={position} scale={scale}>
-      <Float 
-        speed={2 + index * 0.4} 
-        rotationIntensity={type === "SC" ? 0.3 : 1.2} 
-        floatIntensity={type === "BG" ? 4 : 2}
-      >
-        <TokenGeometry type={type} color={color} />
-      </Float>
-    </group>
-  );
-}
-
-function Scene() {
-  return (
-    <>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 10]} intensity={1.5} />
-      <Environment preset="city" />
-
-      {/* Primary Hero Tokens (Star, Check, Coin) */}
-      <FloatingToken type="XP" index={0} position={[5, 4, -3]} color="#3b82f6" />
-      <FloatingToken type="REP" index={1} position={[-6, 0, -4]} color="#8b5cf6" />
-      <FloatingToken type="SC" index={2} position={[4, -4, -2]} color="#f59e0b" />
-
-      {/* Deep Background Complementary Elements */}
-      <FloatingToken type="BG" index={3} position={[-8, 6, -12]} color="#60a5fa" />
-      <FloatingToken type="BG" index={4} position={[8, -7, -10]} color="#c4b5fd" />
-      <FloatingToken type="BG" index={5} position={[-4, -8, -14]} color="#fcd34d" />
-
-      {/* High-End Post-Processing Pipeline */}
-      <EffectComposer enableNormalPass={false}>
-        <Bloom 
-          luminanceThreshold={1.2} 
-          mipmapBlur 
-          intensity={1.4} 
-          radius={0.8}
-        />
-        <DepthOfField 
-          focusDistance={0.0} 
-          focalLength={0.03} 
-          bokehScale={5} 
-          height={480} 
-        />
-        <Vignette 
-          eskil={false} 
-          offset={0.1} 
-          darkness={0.45} 
-        />
-        <Noise 
-          opacity={0.025} 
-        />
-      </EffectComposer>
-    </>
-  );
-}
-
-// --- Main Section Component ---
-
+// ─── Section ─────────────────────────────────────────────────────────────────
 export function EconomySection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.15 });
+  const sectionRef = useRef<HTMLElement>(null);
+  const bgGlowRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
+  const [selected, setSelected] = useState(0);
+  const currency = currencies[selected];
+  const count = useCounter(currency.displayValue, isInView);
+
+  // ─── GSAP Scroll-Driven Effects ────────────────────────────────────────────
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      gsap.fromTo(".js-eco-eyebrow",
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, ease: "power2.out", scrollTrigger: { trigger: section, start: "top 82%", end: "top 62%", scrub: 1 } }
+      );
+
+      gsap.fromTo(".js-eco-h2",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, ease: "power2.out", scrollTrigger: { trigger: section, start: "top 78%", end: "top 58%", scrub: 1 } }
+      );
+
+      gsap.fromTo(".js-eco-desc",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, ease: "power2.out", scrollTrigger: { trigger: section, start: "top 74%", end: "top 54%", scrub: 1 } }
+      );
+
+      gsap.fromTo(".js-eco-tabs",
+        { opacity: 0, y: 15, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, ease: "power2.out", scrollTrigger: { trigger: ".js-eco-tabs", start: "top 90%", end: "top 75%", scrub: 1 } }
+      );
+
+      gsap.fromTo(".js-eco-panel",
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, ease: "power2.out", scrollTrigger: { trigger: ".js-eco-panel", start: "top 85%", end: "top 60%", scrub: 1.2 } }
+      );
+
+      if (bgGlowRef.current) {
+        gsap.to(bgGlowRef.current.querySelectorAll(".js-aurora-blob"), {
+          yPercent: () => -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          }
+        });
+      }
+
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section 
+    <section
       id="economy-section"
-      ref={ref} 
-      className="relative overflow-hidden bg-[#FAFAFA] py-32 sm:py-40"
+      ref={sectionRef}
+      className="relative overflow-hidden bg-[#FAFAFA] pt-32 sm:pt-40 pb-64 select-none"
     >
-      {/* 3D Background Canvas */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 10], fov: 45 }} dpr={[1, 2]}>
-          <Scene />
-        </Canvas>
+      {/* ── Subtle Aurora Canvas (Restricted to bottom 60% of section) ── */}
+      <div 
+        ref={bgGlowRef} 
+        className="absolute inset-x-0 bottom-0 top-[40%] pointer-events-none overflow-hidden z-0"
+      >
+        <div 
+          className="js-aurora-blob absolute left-[-10%] bottom-[-5%] w-[65%] h-[60%] rounded-full opacity-[0.20] blur-[120px] will-change-transform"
+          style={{
+            background: "linear-gradient(45deg, #BAE6FD 0%, #0EA5E9 60%, transparent 100%)"
+          }}
+        />
       </div>
 
-      {/* UI Overlay */}
-      <div className="relative z-10 mx-auto flex max-w-7xl flex-col xl:flex-row xl:items-stretch gap-16 px-6 lg:px-8">
-        
-        {/* Sticky Header Column */}
-        <div className="xl:w-90 shrink-0 relative">
-          <div className="xl:sticky xl:top-32 py-2">
-            <motion.div variants={containerVariants} initial="hidden" animate={isInView ? "visible" : "hidden"}>
-              
-              {/* Premium Top Eyebrow */}
-              <motion.div variants={itemVariants} className="mb-8 flex items-center gap-4">
-                <div className="h-px w-10 bg-[#C19562]/80" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#C19562]">The Economy</span>
-              </motion.div>
-              
-              {/* Refined Typography Scale */}
-              <motion.h2 variants={itemVariants} className="text-[3.5rem] lg:text-[4rem] font-medium leading-[1.05] tracking-tight text-gray-900 mb-6 drop-shadow-sm">
-                Three currencies.<br />
-                <span className="text-gray-400 font-normal">One ecosystem.</span>
-              </motion.h2>
-              
-              <motion.p variants={itemVariants} className="text-[15px] leading-[1.8] text-gray-500 max-w-75">
-                Unlike basic badges or streaks, Ascendra's three-currency model creates tangible value, trust, and real incentives.
-              </motion.p>
-              
-            </motion.div>
+      <div className="relative mx-auto max-w-[85rem] px-6 lg:px-8 z-10">
+
+        {/* ── Header (Completely clear of gradients) ── */}
+        <div className="mb-16">
+          <div className="js-eco-eyebrow mb-6 flex items-center gap-4">
+            <div className="h-[2px] w-8 rounded-full bg-[#C19562]" />
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#C19562]">
+              The Economy
+            </span>
+          </div>
+          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+            <h2 className="js-eco-h2 text-5xl font-semibold leading-[1.1] tracking-tight text-zinc-900 lg:text-6xl">
+              Three currencies.<br />
+              <span className="text-zinc-400">One ecosystem.</span>
+            </h2>
+            <p className="js-eco-desc max-w-sm shrink-0 text-base leading-relaxed text-zinc-500 md:pb-2">
+              Unlike basic badges or streaks, Ascendra's three-currency model creates tangible value, trust, and real incentives.
+            </p>
           </div>
         </div>
 
-        {/* Currency Stack */}
-        <motion.div variants={containerVariants} initial="hidden" animate={isInView ? "visible" : "hidden"} className="flex-1 flex flex-col gap-8">
-          {currencies.map((c) => (
-            <motion.div
-              key={c.symbol}
-              variants={itemVariants}
-              // Ultra-premium glassmorphism card
-              className="group relative overflow-hidden rounded-[2.5rem] bg-white/70 backdrop-blur-2xl p-8 sm:p-12 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_24px_64px_rgba(0,0,0,0.08)]"
-            >
-              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100" style={{ background: c.glowBg }} />
+        {/* ── Modern Segmented Tab Switcher ── */}
+        <div className="js-eco-tabs mb-12 flex justify-start">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/80 bg-white/90 p-1.5 shadow-sm backdrop-blur-md">
+            {currencies.map((c, i) => {
+              const isSelected = selected === i;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setSelected(i)}
+                  suppressHydrationWarning
+                  className={cn(
+                    "relative flex items-center gap-2.5 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300",
+                    isSelected ? "text-white" : "text-zinc-500 hover:text-zinc-900"
+                  )}
+                >
+                  {isSelected && (
+                    <motion.div
+                      layoutId="active-pill"
+                      className="absolute inset-0 rounded-full shadow-md"
+                      style={{ backgroundColor: c.color }}
+                      transition={{ type: "spring", bounce: 0.15, duration: 0.55 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-2">
+                    {c.symbol}
+                    <span className={cn("hidden sm:inline transition-opacity duration-300", isSelected ? "opacity-90" : "opacity-0 w-0 overflow-hidden sm:w-auto")}>
+                      · {c.name}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
-                <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className={cn("flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm border border-black/5", c.bgClass)}>
-                      {c.icon}
-                    </div>
-                    <span className="font-semibold text-gray-900 tracking-tight">{c.name}</span>
+        {/* ── Refined Bento Grid Panel ── */}
+        <div className="js-eco-panel">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currency.id}
+              initial={{ opacity: 0, y: 15, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -15, filter: "blur(6px)" }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 lg:gap-6"
+            >
+              
+              {/* ── Tile 1: Main Stat Card ── */}
+              <div 
+                className="group relative flex min-h-[390px] flex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-200/70 bg-gradient-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-2 lg:col-span-5 lg:row-span-2 backdrop-blur-sm"
+              >
+                <div 
+                  className="absolute -top-24 -right-24 h-80 w-80 rounded-full opacity-[0.08] blur-3xl transition-opacity duration-700 group-hover:opacity-[0.15]"
+                  style={{ backgroundColor: currency.color }}
+                />
+                
+                <div className="relative z-10 flex items-center justify-between">
+                  <div 
+                    className="flex h-13 w-13 items-center justify-center rounded-2xl border border-zinc-100 shadow-sm transition-transform duration-500 group-hover:scale-105"
+                    style={{ backgroundColor: `rgba(${currency.colorRGB}, 0.08)`, color: currency.color }}
+                  >
+                    {currency.icon}
                   </div>
-                  <div className="text-6xl sm:text-7xl font-medium tracking-tight text-gray-950 mb-3 drop-shadow-sm">{c.displayValue}</div>
-                  <p className="text-[14px] font-medium text-[#C19562] uppercase tracking-wider">{c.tagline}</p>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">System Asset</span>
+                    <span className="text-xs font-bold tracking-wider" style={{ color: currency.color }}>{currency.symbol}</span>
+                  </div>
                 </div>
 
-                <div className="flex-1 md:border-l md:border-gray-200/50 md:pl-12">
-                  <p className="text-[14.5px] leading-[1.8] text-gray-500 mb-10">{c.description}</p>
-                  
-                  {/* Elegant Thin Progress Bar */}
-                  <div>
-                    <div className="flex justify-between items-end mb-4 text-[11px] font-semibold text-gray-900 uppercase tracking-widest">
-                      <span>Distribution</span>
-                      <span className={c.textClass}>{c.barWidth}</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-gray-200/60 rounded-full overflow-hidden shadow-inner">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={isInView ? { width: c.barWidth } : {}}
-                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                        className={cn("h-full rounded-full bg-linear-to-r", c.barClass, c.barShadow)} 
-                      />
-                    </div>
-                  </div>
+                <div className="relative z-10 mt-auto">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1, duration: 0.4 }}
+                    className="text-[4.25rem] font-bold leading-none tracking-tight text-zinc-900 sm:text-[4.75rem]"
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                  >
+                    {count.toLocaleString()}
+                  </motion.div>
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    Your Accumulated {currency.symbol} Balance
+                  </p>
+                </div>
+
+                <div className="pointer-events-none absolute bottom-2 right-2 opacity-50 transition-all duration-700 group-hover:scale-105 group-hover:opacity-80">
+                  <ArcRing pct={currency.pct} color={currency.color} />
                 </div>
               </div>
+
+              {/* ── Tile 2: Description & Philosophy ── */}
+              <div className="group flex flex-col justify-center rounded-[2rem] border border-zinc-200/70 bg-gradient-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-2 lg:col-span-7 lg:row-span-1 lg:p-10 backdrop-blur-sm">
+                <span className="mb-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Core Objective</span>
+                <h3 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+                  {currency.tagline}
+                </h3>
+                <p className="max-w-2xl text-base leading-relaxed text-zinc-500 sm:text-lg">
+                  {currency.description}
+                </p>
+              </div>
+
+              {/* ── Tile 3: Key Attributes ── */}
+              <div className="group rounded-[2rem] border border-zinc-200/70 bg-gradient-to-b from-white to-zinc-50/50 p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-1 lg:col-span-4 lg:row-span-1 backdrop-blur-sm">
+                 <span className="mb-5 block text-[10px] font-bold uppercase tracking-widest text-zinc-400">Behaviors & Traits</span>
+                 <ul className="flex flex-col gap-3.5">
+                  {currency.attributes.map((attr, i) => (
+                    <motion.li
+                      key={attr}
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + (i * 0.06), duration: 0.35 }}
+                      className="flex items-center gap-3"
+                    >
+                      <div 
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full shadow-sm border border-zinc-100"
+                        style={{ backgroundColor: `rgba(${currency.colorRGB}, 0.08)` }}
+                      >
+                        <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: currency.color }} />
+                      </div>
+                      <span className="text-sm font-medium text-zinc-600">{attr}</span>
+                    </motion.li>
+                  ))}
+                 </ul>
+              </div>
+
+              {/* ── Tile 4: Asset Class Card ── */}
+              <div 
+                className="group relative flex flex-col items-center justify-center overflow-hidden rounded-[2rem] p-8 text-center transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/50 md:col-span-1 lg:col-span-3 lg:row-span-1"
+                style={{ 
+                  background: `linear-gradient(180deg, rgba(${currency.colorRGB}, 0.04) 0%, rgba(${currency.colorRGB}, 0.01) 100%)`, 
+                  borderColor: `rgba(${currency.colorRGB}, 0.16)`,
+                  borderWidth: "1px"
+                }}
+              >
+                <div 
+                  className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-10 pointer-events-none"
+                  style={{ backgroundImage: `radial-gradient(circle at center, ${currency.color} 0%, transparent 70%)` }}
+                />
+                <span className="relative z-10 mb-2.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: currency.color }}>
+                  Asset Class
+                </span>
+                <span className="relative z-10 text-lg font-semibold text-zinc-800">
+                  {currency.trait.split('·')[0].trim()}
+                </span>
+                <span className="relative z-10 mt-0.5 text-xs font-medium text-zinc-400">
+                  {currency.trait.split('·')[1]?.trim()}
+                </span>
+              </div>
+
             </motion.div>
-          ))}
-        </motion.div>
+          </AnimatePresence>
+        </div>
+
       </div>
+
+     {/* Place this directly after your </GridComponent> closing tag */}
+
+{/* Place this directly after your </GridComponent> closing tag */}
+
+{/* ── Shortened Inverted Bracket Transition Zone (#7FBDDA) ── */}
+<div className="absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden h-[50%]">
+  
+  {/* The Inverted Bracket Shape Glow */}
+  <div 
+    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[75%] rounded-t-[40px] border-t-[32px] border-x-[32px] border-b-0 blur-[45px] opacity-75"
+    style={{ borderColor: "#7FBDDA" }}
+  />
+
+  {/* Soft core glow inside the bracket valley */}
+  <div
+    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[75%] h-[40%] rounded-t-[24px] blur-[60px]"
+    style={{ backgroundColor: "rgba(127, 189, 218, 0.35)" }}
+  />
+
+  {/* Smoothed linear seal — Fades the bracket baseline into the next section */}
+  <div 
+  className="absolute inset-x-0 bottom-0 z-30 h-28" 
+  style={{ 
+    background: "linear-gradient(to bottom, transparent 0%, rgba(127, 189, 218, 0.7) 40%, #7FBDDA 85%, rgba(127, 189, 218) 100%)" 
+  }} 
+/>
+</div>
+
+
+
     </section>
   );
 }

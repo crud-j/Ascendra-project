@@ -222,10 +222,10 @@ export function AscendraNavbar() {
 
   // Fixed wrapper: positions the dropdown relative to the header, not the NavigationMenu root
   // top-20 = 80px = top-4 (16px) + h-16 (64px); mt-3.5 on the viewport adds the 14px gap
-  const viewportWrapperClassName = "fixed top-20 left-4 right-4 flex justify-center";
+  const viewportWrapperClassName = "fixed top-20 left-4 right-4 flex justify-center z-[200]";
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 px-4">
+    <header className="fixed top-4 left-0 right-0 z-[200] px-4">
       <div
         className={cn(
           "mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl px-6",
@@ -242,6 +242,7 @@ export function AscendraNavbar() {
             isLight ? "border-black/10 bg-black/5" : "border-white/10 bg-white/5"
           )}>
             <Image src="/AscendraLogo.svg" alt="Ascendra" width={20} height={20}
+              style={{ height: 'auto' }}
               className="transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
             />
           </div>
@@ -269,7 +270,7 @@ export function AscendraNavbar() {
                     )}>
                       <div className="absolute -top-12 -left-12 h-40 w-40 rounded-full bg-[#C19562] opacity-10 blur-[40px]" />
                       <div className="relative z-10">
-                        <Image src="/AscendraLogo.svg" alt="" width={32} height={32} className="opacity-90" />
+                        <Image src="/AscendraLogo.svg" alt="" width={32} height={32} style={{ height: 'auto' }} className="opacity-90" />
                         <h3 className={cn("mt-5 text-lg font-semibold", isLight ? "text-gray-800" : "text-white/90")}>
                           Ascendra Ecosystem
                         </h3>

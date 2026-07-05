@@ -1,107 +1,175 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Link from "next/link";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 
 export function CtaSection() {
-  const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(contentRef, { once: true, amount: 0.3 });
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const section = sectionRef.current;
-      const content = contentRef.current;
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-      if (content) {
-        const kids = Array.from(content.children as HTMLCollectionOf<HTMLElement>);
-        gsap.fromTo(
-          kids,
-          { opacity: 0, y: 30, filter: "blur(8px)", scale: 0.98 },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            scale: 1,
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power3.out",
-            clearProps: "filter,transform",
-            scrollTrigger: { trigger: section, start: "top 85%", once: true },
-          }
-        );
-      }
-    });
-
-    return () => ctx.revert();
-  }, []);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) setSubmitted(true);
+  };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative flex min-h-[65vh] flex-col items-center justify-center overflow-hidden px-6 py-32 text-center"
-      style={{ backgroundColor: "#041E37" }}
-    >
-      {/* Left arm */}
-      <div className="pointer-events-none absolute bottom-0 left-[-30%] h-[55%] w-[65%] rounded-full bg-white/35 blur-[100px]" />
-
-      {/* Right arm */}
-      <div className="pointer-events-none absolute bottom-0 right-[-30%] h-[55%] w-[65%] rounded-full bg-white/35 blur-[100px]" />
-
-      {/* Wide base ellipse — connects the arms and floods the bottom */}
-      <div className="pointer-events-none absolute bottom-[-20%] left-1/2 h-[55%] w-[180%] -translate-x-1/2 rounded-full bg-white/45 blur-[110px]" />
-
-      {/* Inner brighten — center bottom punch */}
-      <div className="pointer-events-none absolute bottom-[-10%] left-1/2 h-[35%] w-[100%] -translate-x-1/2 rounded-full bg-white/30 blur-[80px]" />
-
-      {/* Floor fade — seamless merge into white footer */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-48"
-        style={{ background: "linear-gradient(to bottom, transparent 0%, white 100%)" }}
-      />
-
-
-      {/* Content */}
-      <div
-        ref={contentRef}
-        className="relative z-10 mx-auto flex max-w-4xl flex-col items-center"
+    <div className="relative" style={{ backgroundColor: "#000000" }}>
+      <section
+        className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-10 py-15 text-center"
+        style={{ backgroundColor: "#041E37" }}
       >
-        {/* Headline */}
-        <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-[4.25rem] lg:leading-[1.05]">
-          Your first lesson is<br className="hidden sm:block" />{" "}
-          <span
-            className="bg-clip-text text-transparent"
-            style={{ backgroundImage: "linear-gradient(135deg, #FCE8C0 0%, #C19562 40%, #A67C52 100%)" }}
-          >
-            waiting for you.
-          </span>
-        </h2>
 
-        {/* Sub-copy */}
-        <p className="mt-7 max-w-2xl text-[17px] font-light tracking-wide text-white/60 sm:text-lg">
-          Join 12,400+ learners. Start free — no credit card, no commitments. Build real skills from day one.
-        </p>
-
-        {/* CTA Button */}
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/signup"
-            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-white px-9 py-4 text-[15px] font-bold transition-all duration-300 hover:scale-105 hover:bg-white/95 hover:shadow-[0_0_40px_rgba(255,255,255,0.35)] active:scale-95"
-            style={{ color: "#041E37" }}
+        {/* ── Content ─────────────────────────────────────────────────── */}
+        <div
+          ref={contentRef}
+          className="relative z-10 mx-auto flex max-w-4xl flex-col items-center"
+        >
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5"
           >
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-            <span className="relative z-10">Create free account</span>
-          </Link>
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#C19562]" />
+            <span
+              className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45"
+              style={{ fontFamily: "var(--font-sora)" }}
+            >
+              Early Access
+            </span>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.85, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-[3.5rem]"
+            style={{ fontFamily: "var(--font-plus-jakarta)" }}
+          >
+            Your climb starts
+            <br />
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, #FCE8C0 0%, #C19562 40%, #A67C52 100%)",
+              }}
+            >
+              with an invite.
+            </span>
+          </motion.h2>
+
+          {/* Sub-copy */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.85, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-6 max-w-md text-[15px] leading-[1.75] text-white/40 sm:text-base"
+            style={{ fontFamily: "var(--font-plus-jakarta)" }}
+          >
+            Drop your email. We&apos;ll send your invite when your spot opens —
+            no spam, no waitlist purgatory.
+          </motion.p>
+
+          {/* Email form */}
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.85, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            onSubmit={handleSubmit}
+            className="mt-9 flex w-full max-w-md flex-col gap-3 sm:flex-row"
+          >
+            {submitted ? (
+              <div
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border text-[14px] font-semibold"
+                style={{
+                  borderColor: "rgba(193,149,98,0.30)",
+                  backgroundColor: "rgba(193,149,98,0.08)",
+                  color: "#C19562",
+                  fontFamily: "var(--font-plus-jakarta)",
+                }}
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                You&apos;re on the list.
+              </div>
+            ) : (
+              <>
+                <input
+                  type="email"
+                  required
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  suppressHydrationWarning
+                  className="h-12 flex-1 rounded-xl border border-white/12 bg-white/5 px-4 text-[14px] text-white outline-none transition-colors duration-200 placeholder:text-white/25 focus:border-white/25 focus:bg-white/8"
+                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
+                />
+                <button
+                  type="submit"
+                  suppressHydrationWarning
+                  className="group relative h-12 overflow-hidden rounded-xl px-7 text-[14px] font-bold text-[#1A0E00] transition-all duration-300 hover:scale-[1.035] hover:shadow-[0_0_28px_-4px_rgba(193,149,98,0.55)] active:scale-[0.97] sm:shrink-0"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #FCE8C0 0%, #C19562 50%, #A67C52 100%)",
+                    fontFamily: "var(--font-plus-jakarta)",
+                  }}
+                >
+                  <div className="absolute inset-0 flex justify-center transform-[skew(-12deg)_translateX(-100%)] group-hover:duration-500 group-hover:transform-[skew(-12deg)_translateX(100%)]">
+                    <div className="relative h-full w-6 bg-white/20" />
+                  </div>
+                  <span className="relative z-10">Request invite</span>
+                </button>
+              </>
+            )}
+          </motion.form>
+
+          {/* Trust line */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.9, delay: 0.5 }}
+            className="mt-4 text-[11px] tracking-wide text-white/28"
+            style={{ fontFamily: "var(--font-plus-jakarta)" }}
+          >
+            Free forever · No credit card · Unsubscribe anytime
+          </motion.p>
         </div>
 
-        {/* Trust line */}
-        <p className="mt-6 text-[12px] text-black/70 tracking-wide">
-          Free forever · No credit card · Cancel anytime
-        </p>
-      </div>
-    </section>
+        {/* U-shaped dark vignette */}
+{/* U-shaped dark vignette - High Contrast */}
+<div className="pointer-events-none absolute bottom-0 left-[-50%] h-[55%] w-[85%] rounded-full bg-[#18181C]/75 blur-[90px]" />
+<div className="pointer-events-none absolute bottom-0 right-[-50%] h-[55%] w-[85%] rounded-full bg-[#18181C]/75 blur-[90px]" />
+<div className="pointer-events-none absolute bottom-[-20%] left-1/2 h-[55%] w-[180%] -translate-x-1/2 rounded-full bg-[#18181C]/65 blur-[100px]" />
+<div className="pointer-events-none absolute bottom-[-10%] left-1/2 h-[35%] w-full -translate-x-1/2 rounded-full bg-[#18181C]/50 blur-[70px]" />
+
+
+
+        {/* Black bottom gradient */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-28"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent 0%, #18181C 100%)",
+          }}
+        />
+      </section>
+    </div>
   );
 }

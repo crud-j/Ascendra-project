@@ -64,7 +64,7 @@ export function HeroSection() {
 
       <div
         ref={heroContentRef}
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+        className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"
       >
         {/* Eyebrow */}
         <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/[0.10] bg-white/[0.05] px-4 py-1.5 backdrop-blur-sm">
@@ -148,7 +148,7 @@ export function HeroSection() {
       </div>
 
       {/* Dark bottom fade */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0A0A0B] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32 bg-gradient-to-t from-[#0A0A0B] to-transparent" />
     </section>
   );
 }
