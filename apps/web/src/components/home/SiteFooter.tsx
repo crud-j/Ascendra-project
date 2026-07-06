@@ -11,10 +11,38 @@ export function SiteFooter() {
   return (
     <footer className="bg-[#18181C]">
       {/* Watermark */}
-      <div className="relative flex w-full items-end justify-center overflow-hidden h-[10vw] min-h-[60px]">
-        <span className="absolute bottom-0 translate-y-[20%] text-[15vw] font-extrabold leading-none tracking-tighter text-white/[1] select-none">
-          Ascendra
-        </span>
+      <div className="relative flex w-full items-end justify-center overflow-hidden h-[20vw] min-h-[60px]">
+        <Image
+          src="/AscendraIconLogo.svg"
+          alt=""
+          width={1200}
+          height={338}
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "80vw",
+            height: "auto",
+            transform: "translateY(30%)",
+            filter: "brightness(0) invert(1)",
+            opacity: 10,
+            userSelect: "none",
+            pointerEvents: "none",
+          }}
+        />
+
+          {/* ─── Ambient Decorative Void ─── */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* The Outer Glowing "U" Track (Mesh Style) */}
+        <div className="absolute inset-x-4 top-12 bottom-4 rounded-[32px] border border-white/[0.08] [mask-image:linear-gradient(to_bottom,transparent_10%,black_80%)]">
+          <div className="absolute left-0 top-1/4 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#FAFAFA]/40 to-[#FAFAFA] blur-[2px]" />
+          <div className="absolute right-0 top-1/4 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#FAFAFA]/40 to-[#FAFAFA] blur-[2px]" />
+        </div>
+      
+        {/* Corner Accent Flares */}
+        <div className="absolute bottom-4 left-4 h-24 w-24 rounded-bl-[32px] border-b border-l border-white/20 blur-[1px]" />
+        <div className="absolute bottom-4 right-4 h-24 w-24 rounded-br-[32px] border-b border-r border-white/20 blur-[1px]" />
+      </div>
       </div>
 
       {/* Main Footer Content */}
@@ -49,16 +77,14 @@ export function SiteFooter() {
 
             {/* Brand column */}
             <div className="col-span-2 md:col-span-1">
-              <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
-                  <Image src="/AscendraLogo.svg" alt="Ascendra" width={18} height={18} style={{ width: 18, height: 18 }} />
-                </div>
-                <span
-                  className="bg-gradient-to-r from-[#C19562] via-[#A67C52] to-[#8B6340] bg-clip-text text-base font-semibold text-transparent"
-                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
-                >
-                  Ascendra
-                </span>
+              <div className="mb-6">
+                <Image
+                  src="/AscendraIconLogo.svg"
+                  alt="Ascendra"
+                  width={100}
+                  height={28}
+                  style={{ height: 28, width: "auto", filter: "brightness(0) invert(1)" }}
+                />
               </div>
 
               <p

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 // ─── Wind canvas ─────────────────────────────────────────────────────────────
 
@@ -239,31 +240,43 @@ export function JourneySection() {
           </p>
         </div>
 
-        {/* Steps — bare text, no card containers */}
-        <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Steps */}
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           {journeySteps.map((step, i) => (
-            <div key={step.step} className="js-journey relative">
-              {/* Thin amber connector on desktop */}
+            <li key={step.step} className="js-journey relative list-none">
+              {/* Thin amber connector on desktop — sits outside the card */}
               {i < journeySteps.length - 1 && (
                 <div
-                  className="absolute top-[0.6rem] left-[calc(100%+1.25rem)] hidden h-px w-[calc(100%-2.5rem)] lg:block"
-                  style={{ background: "linear-gradient(90deg, rgba(193,149,98,0.5), transparent)" }}
+                  className="absolute top-[1.6rem] left-[calc(20%+0.6rem)] hidden h-px w-[calc(100%-1.2rem)] lg:block"
+                  style={{ background: "linear-gradient(90deg, rgba(139,106,62,0.5), transparent)", zIndex: 30 }}
                 />
               )}
 
-              <span className="mb-4 block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8B6A3E]">
-                0{step.step}
-              </span>
-              <div className="mb-3 h-px w-8 bg-[#0A1E2E]/25" />
-              <h3 className="mb-3 text-[17px] font-bold tracking-tight text-[#0A1E2E] leading-snug">
-                {step.title}
-              </h3>
-              <p className="text-[13px] leading-[1.8] text-[#0A1E2E]/70">
-                {step.body}
-              </p>
-            </div>
+              <div className="relative h-full rounded-2xl border border-[#0A1E2E]/20 p-2 md:rounded-3xl md:p-3">
+                <GlowingEffect
+                  spread={40}
+                  glow={true}
+                  disabled={false}
+                  proximity={64}
+                  inactiveZone={0.01}
+                  borderWidth={1}
+                />
+                <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#0A1E2E]/10 bg-white/8 p-6 shadow-[0px_0px_24px_0px_rgba(10,30,46,0.06)] backdrop-blur-sm">
+                  <span className="mb-4 block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8B6A3E]">
+                    0{step.step}
+                  </span>
+                  <div className="mb-3 h-px w-8 bg-[#0A1E2E]/25" />
+                  <h3 className="mb-3 text-[17px] font-bold leading-snug tracking-tight text-[#0A1E2E]">
+                    {step.title}
+                  </h3>
+                  <p className="text-[13px] leading-[1.8] text-[#0A1E2E]/70">
+                    {step.body}
+                  </p>
+                </div>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
 
         {/* Tier chips */}
         <div className="mt-14 flex flex-wrap items-center justify-center gap-2.5">

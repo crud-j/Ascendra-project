@@ -4,15 +4,13 @@ import React, { useState, useRef, useMemo } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
 import Link from "next/link";
 
-// ─── Color tokens ─────────────────────────────────────────────────────────────
+// ─── Color tokens — charcoal family matching #18181C ─────────────────────────
 const C = {
-  bg: "#041E37",
-  card: "#0A2D48",
-  deep: "#062238",
-  border: "#133C58",
-  borderHover: "#1E527A",
-  gold: "#C19562",
-  goldText: "#1A0E00",
+  bg:        "#18181C",
+  card:      "#1C1C1E",
+  deep:      "#121214",
+  gold:      "#C19562",
+  goldText:  "#1A0E00",
 } as const;
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -111,7 +109,7 @@ interface Course {
 }
 
 const ALL_COURSES: Course[] = [
-  // ── Web Development ────────────────────────────────────────────────────────
+  // ── Web Development ──────────────────────────────────────────────────────────
   {
     id: 1,
     title: "Full-Stack Web Development with Next.js 15",
@@ -127,8 +125,7 @@ const ALL_COURSES: Course[] = [
     accent: "#3B82F6",
     icon: <Icon.Laptop />,
     tags: ["Next.js", "TypeScript", "Tailwind CSS"],
-    description:
-      "Master modern full-stack development with the latest Next.js features. Build production-ready applications with server components, streaming, and edge runtime deployments.",
+    description: "Master modern full-stack development with the latest Next.js features. Build production-ready applications with server components, streaming, and edge runtime deployments.",
     popular: true,
   },
   {
@@ -146,8 +143,7 @@ const ALL_COURSES: Course[] = [
     accent: "#3B82F6",
     icon: <Icon.Mobile />,
     tags: ["React Native", "Expo", "iOS", "Android"],
-    description:
-      "Build cross-platform mobile apps with React Native. Ship to iOS and Android from a single codebase using the tools you already know.",
+    description: "Build cross-platform mobile apps with React Native. Ship to iOS and Android from a single codebase using the tools you already know.",
   },
   {
     id: 8,
@@ -164,11 +160,10 @@ const ALL_COURSES: Course[] = [
     accent: "#3B82F6",
     icon: <Icon.Server />,
     tags: ["Node.js", "Express", "REST", "JWT"],
-    description:
-      "Design and build scalable REST APIs with Node.js and Express. Covers authentication, middleware, database integration, and deployment patterns.",
+    description: "Design and build scalable REST APIs with Node.js and Express. Covers authentication, middleware, database integration, and deployment patterns.",
   },
 
-  // ── Data Science ──────────────────────────────────────────────────────────
+  // ── Data Science ─────────────────────────────────────────────────────────────
   {
     id: 2,
     title: "Python for Data Science",
@@ -184,8 +179,7 @@ const ALL_COURSES: Course[] = [
     accent: "#10B981",
     icon: <Icon.BarChart />,
     tags: ["Python", "Pandas", "NumPy"],
-    description:
-      "Get started with data analysis and visualization using Python. Learn Pandas, NumPy, and Matplotlib to extract insights from real-world datasets.",
+    description: "Get started with data analysis and visualization using Python. Learn Pandas, NumPy, and Matplotlib to extract insights from real-world datasets.",
     popular: true,
   },
   {
@@ -221,7 +215,7 @@ const ALL_COURSES: Course[] = [
     tags: ["TensorFlow", "Keras", "CNNs", "Transfer Learning"],
   },
 
-  // ── AI / ML ──────────────────────────────────────────────────────────────
+  // ── AI / ML ──────────────────────────────────────────────────────────────────
   {
     id: 3,
     title: "Building AI Agents with LangChain",
@@ -237,8 +231,7 @@ const ALL_COURSES: Course[] = [
     accent: "#8B5CF6",
     icon: <Icon.Robot />,
     tags: ["LangChain", "GPT-4", "Agents"],
-    description:
-      "Build autonomous AI agents that can plan, use tools, and execute multi-step tasks. From simple chains to production-grade agentic systems.",
+    description: "Build autonomous AI agents that can plan, use tools, and execute multi-step tasks. From simple chains to production-grade agentic systems.",
     popular: true,
   },
   {
@@ -259,7 +252,7 @@ const ALL_COURSES: Course[] = [
     popular: true,
   },
 
-  // ── Design ────────────────────────────────────────────────────────────────
+  // ── Design ────────────────────────────────────────────────────────────────────
   {
     id: 4,
     title: "UI/UX Design Fundamentals",
@@ -275,8 +268,7 @@ const ALL_COURSES: Course[] = [
     accent: "#F43F5E",
     icon: <Icon.Palette />,
     tags: ["Figma", "Prototyping", "Research"],
-    description:
-      "Learn the fundamentals of user interface and experience design. Go from wireframes to polished prototypes using industry-standard processes.",
+    description: "Learn the fundamentals of user interface and experience design. Go from wireframes to polished prototypes using industry-standard processes.",
     popular: true,
   },
   {
@@ -296,7 +288,7 @@ const ALL_COURSES: Course[] = [
     tags: ["Framer Motion", "Animation", "React"],
   },
 
-  // ── Blockchain ────────────────────────────────────────────────────────────
+  // ── Blockchain ────────────────────────────────────────────────────────────────
   {
     id: 5,
     title: "Move Smart Contracts on Aptos",
@@ -312,8 +304,7 @@ const ALL_COURSES: Course[] = [
     accent: "#F59E0B",
     icon: <Icon.LinkChain />,
     tags: ["Move", "Aptos", "DeFi"],
-    description:
-      "Write, test, and deploy Move smart contracts on the Aptos blockchain. Covers resource-oriented programming, security patterns, and DeFi primitives.",
+    description: "Write, test, and deploy Move smart contracts on the Aptos blockchain. Covers resource-oriented programming, security patterns, and DeFi primitives.",
     popular: true,
   },
   {
@@ -334,11 +325,11 @@ const ALL_COURSES: Course[] = [
   },
 ];
 
-// ─── Level config ─────────────────────────────────────────────────────────────
+// ─── Level badge — charcoal-safe semi-transparent tints ──────────────────────
 const LEVEL_CONFIG: Record<Level, { bg: string; border: string; color: string }> = {
-  Beginner:     { bg: "#091E16", border: "#163A28", color: "#34D399" },
-  Intermediate: { bg: "#091826", border: "#163044", color: "#60A5FA" },
-  Advanced:     { bg: "#160B2A", border: "#2A1648", color: "#A78BFA" },
+  Beginner:     { bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.22)",  color: "#34D399" },
+  Intermediate: { bg: "rgba(96,165,250,0.08)",  border: "rgba(96,165,250,0.22)",  color: "#60A5FA" },
+  Advanced:     { bg: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.22)", color: "#A78BFA" },
 };
 
 // ─── Animation variants ───────────────────────────────────────────────────────
@@ -353,12 +344,17 @@ const fadeUp: Variants = {
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-function PlusIcon({ position }: { position: string }) {
+
+// Corner cross — dim at rest, brightens on group hover, gold variant available
+function PlusIcon({ position, gold = false }: { position: string; gold?: boolean }) {
   return (
     <svg
-      width="15" height="15" viewBox="0 0 15 15"
+      width="13" height="13" viewBox="0 0 15 15"
       fill="none" stroke="currentColor" strokeWidth="1"
-      className={`absolute text-[#133C58] transition-colors duration-200 group-hover:text-[#1E527A] ${position}`}
+      className={`absolute transition-all duration-300 ${gold
+        ? "text-white/[0.12] group-hover:text-[#C19562]/70"
+        : "text-white/[0.12] group-hover:text-white/[0.35]"
+      } ${position}`}
     >
       <path d="M7.5 0V15M0 7.5H15" />
     </svg>
@@ -372,13 +368,13 @@ function Stars({ rating }: { rating: number }) {
         <svg
           key={s} className="h-3 w-3"
           fill={s <= Math.floor(rating) ? C.gold : "transparent"}
-          stroke={s <= Math.floor(rating) ? C.gold : C.border}
+          stroke={s <= Math.floor(rating) ? C.gold : "rgba(255,255,255,0.15)"}
           viewBox="0 0 20 20"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
-      <span className="ml-1 text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.40)", fontFamily: "var(--font-sora)" }}>
+      <span className="ml-1 text-[11px] font-medium text-white/40" style={{ fontFamily: "var(--font-sora)" }}>
         {rating}
       </span>
     </div>
@@ -404,12 +400,9 @@ export function CoursesSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.08 });
 
-  // ── Filtering logic ─────────────────────────────────────────────────────────
   const displayedCourses = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-
     if (q) {
-      // Search overrides category — searches all courses
       return ALL_COURSES.filter(
         (c) =>
           c.title.toLowerCase().includes(q) ||
@@ -418,15 +411,12 @@ export function CoursesSection() {
           c.tags.some((t) => t.toLowerCase().includes(q))
       );
     }
-
     if (activeCategory === "popular") return ALL_COURSES.filter((c) => c.popular);
     return ALL_COURSES.filter((c) => c.category === activeCategory);
   }, [activeCategory, searchQuery]);
 
   const featured = displayedCourses[0];
   const rest = displayedCourses.slice(1);
-
-  // Row-span only makes visual sense with 3+ results (right column fills both rows)
   const useBentoHeight = displayedCourses.length >= 3;
 
   return (
@@ -437,7 +427,7 @@ export function CoursesSection() {
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
 
-        {/* ── Header ──────────────────────────────────────────────────────── */}
+        {/* ── Header ───────────────────────────────────────────────────────── */}
         <motion.div
           variants={stagger}
           initial="hidden"
@@ -446,8 +436,8 @@ export function CoursesSection() {
         >
           <motion.p
             variants={fadeUp}
-            className="mb-4 text-[10px] font-bold uppercase tracking-[0.22em]"
-            style={{ color: C.gold, fontFamily: "var(--font-sora)" }}
+            className="mb-4 text-[10px] font-bold uppercase tracking-[0.22em] text-[#C19562]"
+            style={{ fontFamily: "var(--font-sora)" }}
           >
             Curated Learning Paths
           </motion.p>
@@ -467,7 +457,7 @@ export function CoursesSection() {
             {/* Search */}
             <motion.div variants={fadeUp} className="group relative w-full shrink-0 sm:w-72">
               <svg
-                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-200 text-[#133C58] group-focus-within:text-[#C19562]"
+                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/[0.22] transition-colors duration-200 group-focus-within:text-[#C19562]"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -478,14 +468,14 @@ export function CoursesSection() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 suppressHydrationWarning
-                className="w-full border border-dashed border-[#133C58] bg-[#062238] py-2.5 pl-10 pr-4 text-sm text-white outline-none transition-colors duration-200 focus:border-[#C19562]"
+                className="w-full border border-dashed border-white/[0.09] bg-white/[0.04] py-2.5 pl-10 pr-4 text-sm text-white outline-none transition-all duration-300 placeholder:text-white/25 hover:border-white/[0.18] focus:border-[#C19562]"
                 style={{ fontFamily: "var(--font-plus-jakarta)" }}
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
                   suppressHydrationWarning
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#133C58] transition-colors duration-200 hover:text-white/60"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/[0.22] transition-colors duration-200 hover:text-white/60"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -516,7 +506,7 @@ export function CoursesSection() {
                     <span className="relative z-10" style={{ color: C.goldText }}>{cat.label}</span>
                   </>
                 ) : (
-                  <span className="relative z-10 border border-dashed border-[#133C58] px-4 py-1.5 text-white/40 transition-colors duration-200 hover:border-[#1E527A] hover:text-white/70">
+                  <span className="relative z-10 border border-dashed border-white/[0.09] px-4 py-1.5 text-white/40 transition-all duration-300 hover:border-white/[0.22] hover:text-white/70">
                     {cat.label}
                   </span>
                 )}
@@ -525,9 +515,8 @@ export function CoursesSection() {
           </motion.div>
         </motion.div>
 
-        {/* ── Bento Grid ──────────────────────────────────────────────────── */}
+        {/* ── Bento Grid ───────────────────────────────────────────────────── */}
         {displayedCourses.length === 0 ? (
-          // ── Empty state ─────────────────────────────────────────────────
           <motion.div
             key="empty"
             initial={{ opacity: 0, y: 12 }}
@@ -535,7 +524,7 @@ export function CoursesSection() {
             transition={{ duration: 0.4 }}
             className="flex flex-col items-center justify-center py-20 text-center"
           >
-            <div className="mb-5 flex h-12 w-12 items-center justify-center border border-dashed border-[#133C58] bg-[#062238] text-[#133C58]">
+            <div className="mb-5 flex h-12 w-12 items-center justify-center border border-dashed border-white/[0.09] bg-white/[0.04] text-white/[0.22]">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -549,7 +538,7 @@ export function CoursesSection() {
             <button
               onClick={() => setSearchQuery("")}
               suppressHydrationWarning
-              className="group relative inline-flex h-9 items-center gap-2 border border-dashed border-[#133C58] bg-[#062238] px-5 text-[12px] font-semibold text-white/50 transition-colors duration-200 hover:border-[#C19562] hover:text-white/80"
+              className="group relative inline-flex h-9 items-center gap-2 border border-dashed border-white/[0.09] bg-white/[0.04] px-5 text-[12px] font-semibold text-white/50 transition-all duration-300 hover:border-[#C19562]/50 hover:text-white/80"
               style={{ fontFamily: "var(--font-sora)" }}
             >
               Clear search
@@ -566,7 +555,7 @@ export function CoursesSection() {
             {/* ── Featured Card ── */}
             <motion.article
               variants={fadeUp}
-              className={`group relative flex flex-col bg-[#0A2D48] border border-dashed border-[#133C58] hover:border-[#1E527A] transition-colors duration-200 col-span-1 ${
+              className={`group relative flex flex-col bg-[#1C1C1E] border border-dashed border-white/[0.09] transition-all duration-300 col-span-1 hover:border-white/[0.20] hover:shadow-[0_0_28px_-6px_rgba(255,255,255,0.05)] ${
                 displayedCourses.length === 1
                   ? "sm:col-span-2 lg:col-span-3"
                   : `sm:col-span-2 ${useBentoHeight ? "lg:row-span-2" : ""}`
@@ -577,8 +566,8 @@ export function CoursesSection() {
               <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
               <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
 
-              {/* Dark header panel */}
-              <div className="flex-none border-b border-dashed border-[#133C58] bg-[#062238] p-6 transition-colors duration-200 group-hover:border-[#1E527A] sm:p-7">
+              {/* Header panel — one shade darker */}
+              <div className="flex-none border-b border-dashed border-white/[0.07] bg-[#121214] p-6 transition-colors duration-300 group-hover:border-white/[0.14] sm:p-7">
                 <div className="mb-5 flex items-center justify-between">
                   <span
                     className="text-[11px] font-bold uppercase tracking-[0.14em]"
@@ -602,8 +591,8 @@ export function CoursesSection() {
               {/* Card body */}
               <div className="flex flex-1 flex-col p-6 sm:p-7">
                 <p
-                  className="mb-5 text-[13.5px] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-plus-jakarta)" }}
+                  className="mb-5 text-[13.5px] leading-relaxed text-white/45"
+                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
                 >
                   {featured.description ?? `Learn ${featured.categoryLabel} from the ground up with hands-on projects and real-world examples guided by an expert instructor.`}
                 </p>
@@ -612,8 +601,8 @@ export function CoursesSection() {
                   {featured.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="border border-dashed border-[#133C58] bg-[#062238] px-2.5 py-1 text-[11px] font-medium"
-                      style={{ color: "rgba(255,255,255,0.50)", fontFamily: "var(--font-sora)" }}
+                      className="border border-dashed border-white/[0.09] bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-white/50"
+                      style={{ fontFamily: "var(--font-sora)" }}
                     >
                       {tag}
                     </span>
@@ -624,12 +613,11 @@ export function CoursesSection() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="flex h-7 w-7 items-center justify-center border border-dashed border-[#133C58] bg-[#062238] text-[11px] font-bold"
-                        style={{ color: "rgba(255,255,255,0.55)" }}
+                        className="flex h-7 w-7 items-center justify-center border border-dashed border-white/[0.09] bg-white/[0.04] text-[11px] font-bold text-white/55"
                       >
                         {featured.instructor.charAt(0)}
                       </div>
-                      <span className="text-[12px]" style={{ color: "rgba(255,255,255,0.42)", fontFamily: "var(--font-plus-jakarta)" }}>
+                      <span className="text-[12px] text-white/42" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
                         {featured.instructor}
                       </span>
                     </div>
@@ -651,19 +639,19 @@ export function CoursesSection() {
 
                   <Stars rating={featured.rating} />
 
-                  <div className="border-t border-dashed border-[#133C58] transition-colors duration-200 group-hover:border-[#1E527A]" />
+                  <div className="border-t border-dashed border-white/[0.07] transition-colors duration-300 group-hover:border-white/[0.14]" />
 
                   <div className="flex items-center justify-between">
                     <span
-                      className="text-[11px] font-semibold uppercase tracking-[0.12em]"
-                      style={{ color: "rgba(255,255,255,0.28)", fontFamily: "var(--font-sora)" }}
+                      className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/28"
+                      style={{ fontFamily: "var(--font-sora)" }}
                     >
                       Earn on completion
                     </span>
                     <div className="flex items-center gap-3" style={{ fontFamily: "var(--font-sora)" }}>
                       <span className="text-[12px] font-bold text-blue-400">+{featured.xpReward.toLocaleString()} XP</span>
-                      <span style={{ color: C.border }}>·</span>
-                      <span className="text-[12px] font-bold" style={{ color: C.gold }}>+{featured.coinReward} SC</span>
+                      <span className="text-white/20">·</span>
+                      <span className="text-[12px] font-bold text-[#C19562]">+{featured.coinReward} SC</span>
                     </div>
                   </div>
                 </div>
@@ -675,7 +663,7 @@ export function CoursesSection() {
               <motion.article
                 key={course.id}
                 variants={fadeUp}
-                className="group relative flex flex-col border border-dashed border-[#133C58] bg-[#0A2D48] p-6 transition-colors duration-200 hover:border-[#1E527A]"
+                className="group relative flex flex-col border border-dashed border-white/[0.09] bg-[#1C1C1E] p-6 transition-all duration-300 hover:border-white/[0.20] hover:shadow-[0_0_20px_-6px_rgba(255,255,255,0.05)]"
               >
                 <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2" />
                 <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2" />
@@ -698,7 +686,7 @@ export function CoursesSection() {
                   {course.title}
                 </h3>
 
-                <p className="mb-4 text-[12px]" style={{ color: "rgba(255,255,255,0.38)", fontFamily: "var(--font-plus-jakarta)" }}>
+                <p className="mb-4 text-[12px] text-white/38" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
                   by {course.instructor}
                 </p>
 
@@ -706,15 +694,15 @@ export function CoursesSection() {
                   {course.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="border border-dashed border-[#133C58] bg-[#062238] px-2 py-0.5 text-[10px] font-medium"
-                      style={{ color: "rgba(255,255,255,0.38)", fontFamily: "var(--font-sora)" }}
+                      className="border border-dashed border-white/[0.09] bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-white/38"
+                      style={{ fontFamily: "var(--font-sora)" }}
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="my-5 border-t border-dashed border-[#133C58] transition-colors duration-200 group-hover:border-[#1E527A]" />
+                <div className="my-5 border-t border-dashed border-white/[0.07] transition-colors duration-300 group-hover:border-white/[0.16]" />
 
                 <div className="flex items-center justify-between">
                   <Stars rating={course.rating} />
@@ -722,7 +710,7 @@ export function CoursesSection() {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-[11px]" style={{ color: "rgba(255,255,255,0.30)" }}>
+                  <span className="flex items-center gap-1.5 text-[11px] text-white/30">
                     <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -730,8 +718,8 @@ export function CoursesSection() {
                   </span>
                   <div className="flex items-center gap-2 text-[11px] font-semibold" style={{ fontFamily: "var(--font-sora)" }}>
                     <span className="text-blue-400">+{course.xpReward.toLocaleString()} XP</span>
-                    <span style={{ color: C.border }}>·</span>
-                    <span style={{ color: C.gold }}>+{course.coinReward} SC</span>
+                    <span className="text-white/20">·</span>
+                    <span className="text-[#C19562]">+{course.coinReward} SC</span>
                   </div>
                 </div>
               </motion.article>
@@ -739,22 +727,22 @@ export function CoursesSection() {
           </motion.div>
         )}
 
-        {/* ── CTA ─────────────────────────────────────────────────────────── */}
+        {/* ── View all CTA ──────────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
           transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
           className="mt-12 flex justify-center"
         >
           <Link
             href="/courses"
-            className="group relative inline-flex h-11 items-center gap-2.5 border border-dashed border-[#133C58] px-7 text-sm font-semibold text-white/55 transition-colors duration-200 hover:border-[#C19562] hover:text-white/90"
+            className="group relative inline-flex h-11 items-center gap-2.5 border border-dashed border-white/[0.09] px-7 text-sm font-semibold text-white/55 transition-all duration-300 hover:border-[#C19562]/50 hover:bg-[#C19562]/[0.05] hover:text-white/90"
             style={{ fontFamily: "var(--font-plus-jakarta)" }}
           >
-            <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2 group-hover:text-[#C19562]" />
-            <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2 group-hover:text-[#C19562]" />
-            <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2 group-hover:text-[#C19562]" />
-            <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2 group-hover:text-[#C19562]" />
+            <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2" gold />
+            <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2" gold />
+            <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" gold />
+            <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" gold />
             View all courses
             <svg className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -762,20 +750,20 @@ export function CoursesSection() {
           </Link>
         </motion.div>
 
-        {/* ── Section Breakpoint ─────────────────────────────────────────── */}
+        {/* ── Section breakpoint ────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
           className="mb-2 mt-16 flex items-center"
         >
-          <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="#133C58" strokeWidth="1" className="shrink-0">
+          <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1" className="shrink-0">
             <path d="M7.5 0V15M0 7.5H15" />
           </svg>
-          <div className="flex-1 border-t border-dashed border-[#133C58]" />
-          <div className="mx-4 h-2.5 w-2.5 rotate-45 border border-dashed border-[#C19562]" />
-          <div className="flex-1 border-t border-dashed border-[#133C58]" />
-          <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="#133C58" strokeWidth="1" className="shrink-0">
+          <div className="flex-1 border-t border-dashed border-white/[0.07]" />
+          <div className="mx-4 h-2.5 w-2.5 rotate-45 border border-dashed border-[#C19562]/40" />
+          <div className="flex-1 border-t border-dashed border-white/[0.07]" />
+          <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1" className="shrink-0">
             <path d="M7.5 0V15M0 7.5H15" />
           </svg>
         </motion.div>

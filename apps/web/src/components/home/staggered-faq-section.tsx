@@ -33,18 +33,19 @@ export interface StaggeredFAQProps {
   defaultOpen?: string;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Corner cross icon ────────────────────────────────────────────────────────
+// Transitions from dim white → bright white on group hover → gold when open.
 function PlusIcon({ position, activeClass = "" }: { position: string; activeClass?: string }) {
   return (
     <svg
-      width="15"
-      height="15"
+      width="13"
+      height="13"
       viewBox="0 0 15 15"
       fill="none"
       stroke="currentColor"
       strokeWidth="1"
       className={cn(
-        "absolute text-[#133C58] transition-colors duration-200 group-hover:text-[#1E527A]",
+        "absolute text-white/[0.12] transition-all duration-300 group-hover:text-white/[0.35]",
         position,
         activeClass
       )}
@@ -114,32 +115,32 @@ export default function StaggeredFAQSection({
   return (
     <section
       ref={sectionRef}
-      className={cn("relative overflow-hidden pt-2 pb-8 md:pt-1 md:pb-20", className)}
-      style={{ backgroundColor: "#041E37" }}
+      className={cn("relative overflow-hidden pt-24 pb-24 sm:pt-32 sm:pb-32", className)}
+      style={{ backgroundColor: "#18181C" }}
     >
-      {/* Seamless top fade */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-32 z-10"
-        style={{
-          background: "linear-gradient(to bottom, #041E37 0%, transparent 100%)",
-        }}
-      />
+      {/* Top separator line */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center px-6 lg:px-8">
+        <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1" className="shrink-0">
+          <path d="M7.5 0V15M0 7.5H15" />
+        </svg>
+        <div className="flex-1 border-t border-dashed border-white/[0.07]" />
+        <div className="mx-4 h-2.5 w-2.5 rotate-45 border border-dashed border-[#C19562]/40" />
+        <div className="flex-1 border-t border-dashed border-white/[0.07]" />
+        <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="1" className="shrink-0">
+          <path d="M7.5 0V15M0 7.5H15" />
+        </svg>
+      </div>
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-8">
-
         <div className="grid gap-16 md:grid-cols-12 md:gap-12 lg:gap-20">
-          
+
           {/* ── Left column ── */}
           <div className="faq-left flex flex-col md:col-span-5 lg:col-span-5">
             <div>
-              {/* Eyebrow Label */}
-              <div 
-                className="mb-8 inline-flex items-center gap-2 border border-dashed border-[#133C58] bg-[#062238] px-3 py-1.5"
-              >
-                <span className="flex h-2 w-2 items-center justify-center border border-[#C19562]">
-                  <span className="h-0.5 w-0.5 bg-[#C19562]" />
-                </span>
-                <span 
+              {/* Eyebrow */}
+              <div className="mb-8 inline-flex items-center gap-2 rounded-sm border border-dashed border-white/[0.10] bg-white/[0.03] px-3 py-1.5">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-[#C19562]" />
+                <span
                   className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#C19562]"
                   style={{ fontFamily: "var(--font-sora)" }}
                 >
@@ -148,7 +149,7 @@ export default function StaggeredFAQSection({
               </div>
 
               {/* Title */}
-              <h2 
+              <h2
                 className="text-[2.25rem] font-extrabold leading-[1.1] tracking-[-0.025em] text-white sm:text-5xl lg:text-6xl"
                 style={{ fontFamily: "var(--font-plus-jakarta)" }}
               >
@@ -156,44 +157,53 @@ export default function StaggeredFAQSection({
               </h2>
 
               {/* Subtitle */}
-              <p 
-                className="mt-6 text-[14px] leading-relaxed text-white/50 max-w-md text-balance"
+              <p
+                className="mt-6 max-w-md text-balance text-[14px] leading-relaxed text-white/45"
                 style={{ fontFamily: "var(--font-plus-jakarta)" }}
               >
                 {subtitle}
               </p>
             </div>
 
-            {/* Support Card */}
+            {/* Support card */}
             {!hideSupport && (
               <div className="mt-14 md:mt-auto md:pt-24">
-                <div className="group relative border border-dashed border-[#133C58] bg-[#062238] p-8 transition-colors duration-200 hover:border-[#1E527A]">
-                  <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2" />
-                  <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2" />
-                  <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
-                  <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
-                  
+                {/* Outer group — dashed border that glows gold on hover */}
+                <div className="group relative border border-dashed border-white/[0.09] bg-[#1C1C1E] p-8 transition-all duration-300 hover:border-[#C19562]/40 hover:shadow-[0_0_24px_-4px_rgba(193,149,98,0.12)]">
+                  {/* Corners */}
+                  <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2" activeClass="group-hover:text-[#C19562]/60" />
+                  <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2"  activeClass="group-hover:text-[#C19562]/60" />
+                  <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" activeClass="group-hover:text-[#C19562]/60" />
+                  <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" activeClass="group-hover:text-[#C19562]/60" />
+
+                  {/* Subtle inner glow */}
+                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    style={{ background: "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(193,149,98,0.06) 0%, transparent 70%)" }}
+                  />
+
                   <div className="relative z-10">
-                    <h3 
+                    <h3
                       className="mb-3 text-xl font-bold tracking-tight text-white"
                       style={{ fontFamily: "var(--font-plus-jakarta)" }}
                     >
                       Still have questions?
                     </h3>
-                    <p 
-                      className="mb-8 max-w-[260px] text-[13.5px] leading-relaxed text-white/45"
+                    <p
+                      className="mb-8 max-w-[260px] text-[13.5px] leading-relaxed text-white/40"
                       style={{ fontFamily: "var(--font-plus-jakarta)" }}
                     >
                       {supportText}
                     </p>
+
+                    {/* CTA button */}
                     <Link
                       href={supportLink}
-                      className="group/btn relative inline-flex h-11 items-center gap-2.5 border border-dashed border-[#133C58] bg-[#0A2D48] px-7 text-sm font-semibold text-white/55 transition-colors duration-200 hover:border-[#C19562] hover:text-white/90"
+                      className="group/btn relative inline-flex h-11 items-center gap-2.5 border border-dashed border-white/[0.10] bg-white/[0.04] px-7 text-sm font-semibold text-white/50 transition-all duration-300 hover:border-[#C19562]/50 hover:bg-[#C19562]/[0.06] hover:text-white/85"
                       style={{ fontFamily: "var(--font-plus-jakarta)" }}
                     >
-                      <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2 group-hover/btn:text-[#C19562]" />
-                      <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2 group-hover/btn:text-[#C19562]" />
-                      
+                      <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2" activeClass="group-hover/btn:text-[#C19562]/70" />
+                      <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" activeClass="group-hover/btn:text-[#C19562]/70" />
+
                       {supportLinkText}
                       <svg
                         className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-0.5"
@@ -211,48 +221,61 @@ export default function StaggeredFAQSection({
             )}
           </div>
 
-          {/* ── Accordion (Right Column) ── */}
+          {/* ── Accordion (right column) ── */}
           <div className="flex flex-col justify-center md:col-span-7 lg:col-span-7">
             <Accordion
               multiple={false}
               defaultValue={defaultOpen ? [defaultOpen] : undefined}
-              className="flex flex-col gap-6"
+              className="flex flex-col gap-5"
             >
               {faqItems.map((item) => (
                 <AccordionItem
                   key={item.id}
                   value={item.id}
                   className={cn(
-                    "faq-item group relative border border-dashed border-[#133C58] bg-[#0A2D48] transition-colors duration-200",
-                    "hover:border-[#1E527A] data-[state=open]:border-[#1E527A]"
+                    "faq-item group relative border border-dashed border-white/[0.09] bg-[#1C1C1E]",
+                    "transition-all duration-300",
+                    // Hover: brighten border + subtle gold tint
+                    "hover:border-white/[0.20] hover:shadow-[0_0_20px_-6px_rgba(255,255,255,0.06)]",
+                    // Open: gold border + gold glow
+                    "data-[state=open]:border-[#C19562]/40 data-[state=open]:shadow-[0_0_24px_-4px_rgba(193,149,98,0.10)]"
                   )}
                 >
-                  {/* Plus Overlays */}
-                  <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2" activeClass="group-data-[state=open]:text-[#C19562]" />
-                  <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2" activeClass="group-data-[state=open]:text-[#C19562]" />
-                  <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" activeClass="group-data-[state=open]:text-[#C19562]" />
-                  <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" activeClass="group-data-[state=open]:text-[#C19562]" />
+                  {/* Corner crosses — dim at rest, bright on hover, gold when open */}
+                  <PlusIcon position="top-0 left-0 -translate-x-1/2 -translate-y-1/2"  activeClass="group-data-[state=open]:text-[#C19562]/70" />
+                  <PlusIcon position="top-0 right-0 translate-x-1/2 -translate-y-1/2"   activeClass="group-data-[state=open]:text-[#C19562]/70" />
+                  <PlusIcon position="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" activeClass="group-data-[state=open]:text-[#C19562]/70" />
+                  <PlusIcon position="bottom-0 right-0 translate-x-1/2 translate-y-1/2" activeClass="group-data-[state=open]:text-[#C19562]/70" />
 
-                  {/* Active Gold Edge Accent */}
-                  <div className="absolute left-0 top-0 h-full w-[2px] bg-[#C19562] opacity-0 transition-opacity duration-300 group-data-[state=open]:opacity-100" />
+                  {/* Left gold accent stripe — slides in when open */}
+                  <div className="absolute left-0 top-0 h-full w-[2px] origin-top scale-y-0 bg-gradient-to-b from-[#FCE8C0] via-[#C19562] to-transparent transition-transform duration-500 ease-out group-data-[state=open]:scale-y-100" />
+
+                  {/* Radial glow when open */}
+                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-data-[state=open]:opacity-100"
+                    style={{ background: "radial-gradient(ellipse 80% 50% at 0% 50%, rgba(193,149,98,0.06) 0%, transparent 70%)" }}
+                  />
 
                   <AccordionTrigger
                     className={cn(
                       "relative z-10 cursor-pointer px-6 py-6 text-left transition-all duration-200 hover:no-underline md:px-8",
-                      // Technical sharp chevron styling
-                      "[&>svg]:box-content [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:border [&>svg]:border-dashed [&>svg]:border-[#133C58] [&>svg]:bg-[#062238] [&>svg]:p-2 [&>svg]:text-white/50 [&>svg]:transition-all",
-                      "hover:[&>svg]:border-[#1E527A] hover:[&>svg]:text-white/90 group-data-[state=open]:[&>svg]:border-[#C19562] group-data-[state=open]:[&>svg]:text-[#C19562]"
+                      // Chevron icon: dashed border style matching the charcoal palette
+                      "[&>svg]:box-content [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0",
+                      "[&>svg]:border [&>svg]:border-dashed [&>svg]:border-white/[0.10]",
+                      "[&>svg]:bg-white/[0.03] [&>svg]:p-2 [&>svg]:text-white/40",
+                      "[&>svg]:transition-all [&>svg]:duration-300",
+                      "hover:[&>svg]:border-white/[0.22] hover:[&>svg]:text-white/75",
+                      "group-data-[state=open]:[&>svg]:border-[#C19562]/50 group-data-[state=open]:[&>svg]:text-[#C19562]"
                     )}
                   >
-                    <span 
-                      className="pr-6 text-[15px] font-bold leading-snug text-white transition-colors duration-200"
+                    <span
+                      className="pr-6 text-[15px] font-bold leading-snug text-white/80 transition-colors duration-200 group-hover:text-white group-data-[state=open]:text-white"
                       style={{ fontFamily: "var(--font-plus-jakarta)" }}
                     >
                       {item.question}
                     </span>
                   </AccordionTrigger>
 
-                  <AccordionContent className="relative z-10 max-w-[95%] px-6 pb-7 pt-0 text-[14px] leading-relaxed text-white/50 md:px-8">
+                  <AccordionContent className="relative z-10 max-w-[95%] px-6 pb-7 pt-0 text-[14px] leading-relaxed text-white/45 md:px-8">
                     <BlurredStagger text={item.answer} />
                   </AccordionContent>
                 </AccordionItem>

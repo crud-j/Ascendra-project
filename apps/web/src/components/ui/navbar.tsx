@@ -183,11 +183,29 @@ ListItem.displayName = "ListItem";
 // --- Navbar ---
 
 // ─── Theme zones ──────────────────────────────────────────────────────────────
-// "dark"     → hero (dark bg)
-// "light"    → features + economy (near-white bg)
-// "journey"  → journey section through FAQ (sky-blue → deep navy)
-// "charcoal" → testimonial + mentor (very dark #18181C)
+// "dark"     → near-black / dark-navy sections (#0A0A0B, #041E37)
+// "light"    → near-white sections (#FAFAFA, #FFFFFF)
+// "journey"  → sky-gradient section
+// "charcoal" → dark-charcoal sections (#18181C)
 type NavTheme = "dark" | "light" | "journey" | "charcoal";
+
+const SECTION_THEMES: Record<string, NavTheme> = {
+  "hero":            "dark",
+  "why-ascendra":    "light",
+  "product-preview": "light",
+  "journey":         "journey",
+  "economy":         "dark",
+  "portfolio":       "dark",
+  "guild":           "dark",
+  "mentor":          "charcoal",
+  "ai-coach":        "charcoal",
+  "courses":         "charcoal",
+  "testimonial":     "charcoal",
+  "faq":             "charcoal",
+  "roadmap":         "charcoal",
+  "cta":             "charcoal",
+  "footer":          "charcoal",
+};
 
 export function AscendraNavbar() {
   const [theme, setTheme] = React.useState<NavTheme>("dark");
@@ -196,23 +214,23 @@ export function AscendraNavbar() {
     const NAV_BOTTOM = 80; // px from viewport top where navbar bottom sits
 
     const onScroll = () => {
-      const hero        = document.querySelector('[data-section="hero"]');
-      const journey     = document.querySelector('[data-section="journey"]');
-      const testimonial = document.querySelector('[data-section="testimonial"]');
+      const sections = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-section]")
+      );
 
-      const heroBottom        = hero?.getBoundingClientRect().bottom        ?? -Infinity;
-      const journeyTop        = journey?.getBoundingClientRect().top        ??  Infinity;
-      const testimonialTop    = testimonial?.getBoundingClientRect().top    ??  Infinity;
-
-      if (heroBottom > NAV_BOTTOM) {
-        setTheme("dark");
-      } else if (testimonialTop <= NAV_BOTTOM) {
-        setTheme("charcoal");
-      } else if (journeyTop <= NAV_BOTTOM) {
-        setTheme("journey");
-      } else {
-        setTheme("light");
+      // Walk sections in DOM order; the last one whose top is ≤ NAV_BOTTOM
+      // is the section currently containing the navbar.
+      let active: HTMLElement | null = null;
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= NAV_BOTTOM) {
+          active = section;
+        } else {
+          break;
+        }
       }
+
+      const name = active?.dataset.section ?? sections[0]?.dataset.section ?? "hero";
+      setTheme(SECTION_THEMES[name] ?? "dark");
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -266,26 +284,22 @@ export function AscendraNavbar() {
     <header className="fixed top-4 left-0 right-0 z-[200] px-4">
       <div className={cn("mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl px-6", navbarBg)}>
         {/* Logo */}
-        <Link href="/" className="group flex items-center gap-3 transition-opacity hover:opacity-90">
-          <div className={cn(
-            "relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-inner transition-[background-color,border-color] duration-500",
-            isLight ? "border-black/10 bg-black/5" : isJourney ? "border-[#7FBDDA]/20 bg-[#7FBDDA]/10" : "border-white/10 bg-white/5"
-          )}>
-            <Image src="/AscendraLogo.svg" alt="Ascendra" width={20} height={20}
-              style={{ height: 'auto' }}
-              className="transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
-            />
-          </div>
-          <span className={cn(
-            "text-lg font-semibold tracking-tight bg-gradient-to-r bg-clip-text text-transparent transition-all duration-500",
-            isLight
-              ? "from-[#15161A] via-[#3A3D45] to-[#6B6F7A]"
-              : isJourney
-              ? "from-[#D4EDF8] via-[#A8D4EA] to-[#7FBDDA]"
-              : "from-[#FCE8C0] via-[#C19562] to-[#A67C52]"
-          )}>
-            Ascendra
-          </span>
+        <Link href="/" className="group transition-opacity hover:opacity-85">
+          <Image
+            src="/AscendraIconLogo.svg"
+            alt="Ascendra"
+            width={100}
+            height={28}
+            style={{
+              height: 28,
+              width: "auto",
+              filter: isLight
+                ? "brightness(0)"
+                : "brightness(0) invert(1)",
+              transition: "filter 0.5s ease",
+            }}
+            className="transition-transform duration-500 group-hover:scale-[1.03]"
+          />
         </Link>
 
         {/* Center Navigation */}
@@ -304,7 +318,7 @@ export function AscendraNavbar() {
                     )}>
                       <div className="absolute -top-12 -left-12 h-40 w-40 rounded-full bg-[#C19562] opacity-10 blur-[40px]" />
                       <div className="relative z-10">
-                        <Image src="/AscendraLogo.svg" alt="" width={32} height={32} style={{ height: 'auto' }} className="opacity-90" />
+                        <Image src="/AscendraIconLogo.svg" alt="" width={100} height={28} style={{ height: 22, width: "auto", filter: isLight ? "brightness(0)" : "brightness(0) invert(1)" }} className="opacity-90" />
                         <h3 className={cn("mt-5 text-lg font-semibold", isLight ? "text-gray-800" : isJourney ? "text-[#D4EDF8]/90" : "text-white/90")}>
                           Ascendra Ecosystem
                         </h3>
