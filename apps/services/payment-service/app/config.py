@@ -8,6 +8,12 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
     SECRET_KEY: str = "change-me-in-production"
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_PUBLISHABLE_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+    GCASH_API_KEY: str = ""
+    MAYA_API_KEY: str = ""
+    MAYA_SECRET_KEY: str = ""
 
     class Config:
         env_file = ".env"

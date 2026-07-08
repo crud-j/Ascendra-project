@@ -8,6 +8,12 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
     SECRET_KEY: str = "change-me-in-production"
+    JUDGE0_BASE_URL: str = "https://judge0-ce.p.rapidapi.com"
+    JUDGE0_API_KEY: str = ""
+    R2_ACCOUNT_ID: str = ""
+    R2_ACCESS_KEY_ID: str = ""
+    R2_SECRET_ACCESS_KEY: str = ""
+    R2_BUCKET_NAME: str = "ascendra-assets"
 
     class Config:
         env_file = ".env"

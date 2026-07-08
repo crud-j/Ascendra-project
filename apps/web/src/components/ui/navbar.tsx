@@ -291,7 +291,7 @@ export function AscendraNavbar() {
             width={100}
             height={28}
             style={{
-              height: 28,
+              height: "28px",
               width: "auto",
               filter: isLight
                 ? "brightness(0)"
@@ -517,7 +517,7 @@ export function AscendraNavbar() {
           </Link>
 
           <Link
-            href="/signup"
+            href="/register"
             className={cn(
               buttonVariants({ size: "sm" }),
               "group relative overflow-hidden rounded-xl border-0 font-semibold text-black shadow-lg transition-all duration-300",

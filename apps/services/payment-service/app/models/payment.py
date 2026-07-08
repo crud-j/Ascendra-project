@@ -23,7 +23,7 @@ class PaymentTransaction(Base):
     # pending | processing | settled | failed | refunded
 
     skill_coins_involved: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    metadata: Mapped[str] = mapped_column(Text, default="{}")
+    extra_data: Mapped[str] = mapped_column("metadata", Text, default="{}")
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     settled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -21,6 +21,6 @@ class Notification(Base):
     # in_app | email | push | websocket
 
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)
-    metadata: Mapped[str] = mapped_column(Text, default="{}")  # JSON
+    extra_data: Mapped[str] = mapped_column("metadata", Text, default="{}")  # JSON
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -587,35 +587,61 @@ export function HeroSection() {
         </motion.div>
 
       </div>
-{/* Cleaned & Sharpened White Background Art Layer */}
-<div className="absolute inset-x-0 bottom-0 h-[50%] overflow-hidden pointer-events-none">
-  <div className="absolute inset-0 z-0 overflow-hidden">
-    <div className="absolute inset-0 z-[-1]">
+
+            {/* Continuity System Ambient Backdrop Design Mapping - Bracket Chassis Transition */} 
+<div className="absolute inset-x-0 bottom-0 h-[65%] overflow-hidden pointer-events-none"> 
+  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden"> 
+    <div className="absolute inset-0 z-[-1]"> 
       
-      {/* Outer Glow Border Box */}
-      <div className="absolute inset-x-4 top-12 bottom-4 rounded-[32px] border border-white/25 blur-[0.5px] [mask-image:linear-gradient(to_bottom,transparent_0%,black_40%,black_75%,transparent_95%)]">
-        <div className="absolute left-0 top-1/4 bottom-12 w-[1.5px] blur-[1px] bg-gradient-to-b from-transparent via-white/50 to-transparent" />
-        <div className="absolute right-0 top-1/4 bottom-12 w-[1.5px] blur-[1px] bg-gradient-to-b from-transparent via-white/50 to-transparent" />
+      {/* --- CHASSIS BRACKETS --- */}
+      {/* Container wrapper for structural line masking */}
+      <div className="absolute inset-x-6 top-0 bottom-4 rounded-[40px] [mask-image:linear-gradient(to_bottom,transparent_0%,black_15%,black_85%,transparent_100%)]">
+        
+        {/* Top-Left Corner Bracket Fragment */}
+        <div className="absolute left-0 top-0 w-12 h-12 border-l border-t rounded-tl-[24px]" style={{ borderColor: "rgba(255, 255, 255, 0.25)" }} />
+        
+        {/* Top-Right Corner Bracket Fragment */}
+        <div className="absolute right-0 top-0 w-12 h-12 border-r border-t rounded-tr-[24px]" style={{ borderColor: "rgba(255, 255, 255, 0.25)" }} />
+        
+        {/* Left Vertical Runner Rail */}
+        <div className="absolute left-0 top-12 bottom-12 w-[1px]" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.05))" }} />
+        
+        {/* Right Vertical Runner Rail */}
+        <div className="absolute right-0 top-12 bottom-12 w-[1px]" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.25), rgba(255,255,255,0.05))" }} />
+
+        {/* Bottom-Left Corner Bracket Fragment */}
+        <div className="absolute left-0 bottom-0 w-12 h-12 border-l border-b rounded-bl-[24px]" style={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
+        
+        {/* Bottom-Right Corner Bracket Fragment */}
+        <div className="absolute right-0 bottom-0 w-12 h-12 border-r border-b rounded-br-[24px]" style={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
       </div>
 
-      {/* Sharp Corner Highlights */}
-      <div className="absolute bottom-4 left-4 h-24 w-24 rounded-bl-[32px] border-b border-l border-white/45 blur-[0.5px] [mask-image:linear-gradient(to_top,transparent_15%,black_100%)]" />
-      <div className="absolute bottom-4 right-4 h-24 w-24 rounded-br-[32px] border-b border-r border-white/45 blur-[0.5px] [mask-image:linear-gradient(to_top,transparent_15%,black_100%)]" />
 
-      {/* Aurora Ambient Blobs (Sharpened Opacity) */}
-      <div className="js-aurora-blob absolute left-[-15%] bottom-[-5%] h-[65%] w-[65%] rounded-full opacity-25 blur-[120px] will-change-transform bg-gradient-to-br from-white via-white/80 to-transparent" />
-      <div className="js-aurora-blob absolute right-[-15%] bottom-[-5%] h-[65%] w-[65%] rounded-full opacity-25 blur-[120px] will-change-transform bg-gradient-to-bl from-white via-white/80 to-transparent" />
-
-      {/* Core Base Structures */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[75%] w-[85%] rounded-t-[40px] border-b-0 border-t-32 border-x-32 border-white blur-[40px] opacity-80" />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[45%] w-[75%] rounded-t-[24px] blur-[60px] bg-white/40" />
-
-      {/* Sharp Bottom Transition Gradient */}
-      <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-white/30 via-40% via-white/85 via-75% to-white" />
+      {/* --- AMBIENT VOLUMETRIC LIGHTING --- */}
+      {/* Left Base Flare */}
+      <div className="js-aurora-blob absolute left-[-15%] bottom-[-15%] h-[80%] w-[70%] rounded-full opacity-[0.22] blur-[150px] will-change-transform" 
+        style={{ background: "radial-gradient(circle at center, #FFFFFF 0%, rgba(255,255,255,0.5) 40%, transparent 100%)" }} 
+      /> 
       
-    </div>
-    <div className="relative z-10 h-full w-full" />
-  </div>
+      {/* Right Base Flare */}
+      <div className="js-aurora-blob absolute right-[-15%] bottom-[-15%] h-[80%] w-[70%] rounded-full opacity-[0.22] blur-[150px] will-change-transform" 
+        style={{ background: "radial-gradient(circle at center, #FFFFFF 0%, rgba(255,255,255,0.5) 40%, transparent 100%)" }} 
+      /> 
+
+      {/* Center Grounding Glow (Prevents a hollow middle gap) */}
+      <div className="absolute left-1/4 right-1/4 bottom-[-10%] h-[50%] opacity-[0.15] blur-[120px]"
+        style={{ background: "radial-gradient(ellipse at bottom, #FFFFFF 0%, transparent 80%)" }}
+      />
+
+
+      {/* --- TRANSITION FLOOR --- */}
+      {/* Heavy white bleed that ensures 100% solid white at the section seam */}
+      <div className="absolute inset-x-0 bottom-0 h-72" 
+        style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.03) 20%, rgba(255,255,255,0.4) 65%, #FFFFFF 100%)" }} 
+      /> 
+    
+    </div> 
+  </div> 
 </div>
 
 

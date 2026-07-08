@@ -1,0 +1,54 @@
+2026-07-06 21:19:26 [info     ] service_starting               service=auth-service
+2026-07-06 21:19:30,525 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-07-06 21:19:30,525 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-07-06 21:19:30,528 INFO sqlalchemy.engine.Engine select current_schema()
+2026-07-06 21:19:30,529 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-07-06 21:19:30,530 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-07-06 21:19:30,531 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-07-06 21:19:30,532 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-07-06 21:19:30,536 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.display_name, users.avatar_url, users.wallet_address, users.is_active, users.is_verified, users.role, users.created_at, users.updated_at 
+FROM users 
+WHERE users.email = $1::VARCHAR OR users.username = $2::VARCHAR
+2026-07-06 21:19:30,536 INFO sqlalchemy.engine.Engine [generated in 0.00033s] ('test@ascendra.io', 'testuser')
+2026-07-06 21:19:30,889 INFO sqlalchemy.engine.Engine INSERT INTO users (id, email, username, hashed_password, display_name, avatar_url, wallet_address, is_active, is_verified, role) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR, $7::VARCHAR, $8::BOOLEAN, $9::BOOLEAN, $10::VARCHAR) RETURNING users.created_at, users.updated_at
+2026-07-06 21:19:30,889 INFO sqlalchemy.engine.Engine [generated in 0.00049s] ('fb2b1102-3239-4c81-9cf7-be370a570dbf', 'test@ascendra.io', 'testuser', '$2b$12$W44Pd297.59ZZrIG/UJMMOi60wX4.SySBGdcBNsI/jwuLhvGCeNQi', 'Test User', None, None, True, False, 'learner')
+2026-07-06 21:19:30 [info     ] user_registered                email=test@ascendra.io user_id=fb2b1102-3239-4c81-9cf7-be370a570dbf
+2026-07-06 21:19:30,898 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:65106 - "POST /auth/register HTTP/1.1" 201 Created
+2026-07-06 21:19:44,197 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-07-06 21:19:44,199 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.display_name, users.avatar_url, users.wallet_address, users.is_active, users.is_verified, users.role, users.created_at, users.updated_at 
+FROM users 
+WHERE users.email = $1::VARCHAR
+2026-07-06 21:19:44,200 INFO sqlalchemy.engine.Engine [generated in 0.00069s] ('test@ascendra.io',)
+2026-07-06 21:19:44,525 INFO sqlalchemy.engine.Engine INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at, revoked) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::TIMESTAMP WITH TIME ZONE, $5::BOOLEAN) RETURNING refresh_tokens.created_at
+2026-07-06 21:19:44,525 INFO sqlalchemy.engine.Engine [generated in 0.00044s] ('764c898f-bfd2-4b7d-89c9-23752f6945fb', 'fb2b1102-3239-4c81-9cf7-be370a570dbf', '4a01fa358eea3c06a188446ae8455786dc5adc222f16609c0dc4506bc6265344', datetime.datetime(2026, 7, 13, 13, 19, 44, 508667, tzinfo=datetime.timezone.utc), False)
+2026-07-06 21:19:44,535 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:65112 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59125 - "OPTIONS /auth/register HTTP/1.1" 200 OK
+2026-07-06 21:20:27,019 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-07-06 21:20:27,020 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.display_name, users.avatar_url, users.wallet_address, users.is_active, users.is_verified, users.role, users.created_at, users.updated_at 
+FROM users 
+WHERE users.email = $1::VARCHAR OR users.username = $2::VARCHAR
+2026-07-06 21:20:27,020 INFO sqlalchemy.engine.Engine [cached since 56.48s ago] ('justinesolimanr08@gmail.com', 'justine23')
+2026-07-06 21:20:27,496 INFO sqlalchemy.engine.Engine INSERT INTO users (id, email, username, hashed_password, display_name, avatar_url, wallet_address, is_active, is_verified, role) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR, $7::VARCHAR, $8::BOOLEAN, $9::BOOLEAN, $10::VARCHAR) RETURNING users.created_at, users.updated_at
+2026-07-06 21:20:27,498 INFO sqlalchemy.engine.Engine [cached since 56.61s ago] ('a1674d5c-78cd-439a-8d0e-c866475f91f7', 'justinesolimanr08@gmail.com', 'justine23', '$2b$12$MhKrAN80D3XmNYqWMD7e2Omrd7W.NqVXErg1Avj6euo8Y0lpRdjmi', 'jusitne', None, None, True, False, 'learner')
+2026-07-06 21:20:27 [info     ] user_registered                email=justinesolimanr08@gmail.com user_id=a1674d5c-78cd-439a-8d0e-c866475f91f7
+2026-07-06 21:20:27,502 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:59125 - "POST /auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64302 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+2026-07-06 21:38:00,768 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-07-06 21:38:00,780 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.display_name, users.avatar_url, users.wallet_address, users.is_active, users.is_verified, users.role, users.created_at, users.updated_at 
+FROM users 
+WHERE users.email = $1::VARCHAR
+2026-07-06 21:38:00,782 INFO sqlalchemy.engine.Engine [cached since 1097s ago] ('justinesolimanr08@gmail.com',)
+2026-07-06 21:38:01,375 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:64302 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+2026-07-06 21:38:11,409 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-07-06 21:38:11,411 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.display_name, users.avatar_url, users.wallet_address, users.is_active, users.is_verified, users.role, users.created_at, users.updated_at 
+FROM users 
+WHERE users.email = $1::VARCHAR
+2026-07-06 21:38:11,411 INFO sqlalchemy.engine.Engine [cached since 1107s ago] ('justinesolimanr08@gmail.com',)
+2026-07-06 21:38:12,324 INFO sqlalchemy.engine.Engine INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at, revoked) VALUES ($1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::TIMESTAMP WITH TIME ZONE, $5::BOOLEAN) RETURNING refresh_tokens.created_at
+2026-07-06 21:38:12,324 INFO sqlalchemy.engine.Engine [cached since 1108s ago] ('8dd81d3d-69ea-4883-90ce-97dafc344d7d', 'a1674d5c-78cd-439a-8d0e-c866475f91f7', '5c9848e5e24a00ce5164bfcbcf97b8a9fd27525f053de84788ac5db48a01355f', datetime.datetime(2026, 7, 13, 13, 38, 12, 265922, tzinfo=datetime.timezone.utc), False)
+2026-07-06 21:38:12,358 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:61088 - "POST /auth/login HTTP/1.1" 200 OK

@@ -25,7 +25,7 @@ export function SiteFooter() {
             height: "auto",
             transform: "translateY(30%)",
             filter: "brightness(0) invert(1)",
-            opacity: 10,
+            opacity: 1,
             userSelect: "none",
             pointerEvents: "none",
           }}
@@ -94,18 +94,9 @@ export function SiteFooter() {
                 The learning ecosystem that transforms learners into builders and builders into earners.
               </p>
 
-              <div className="flex items-center gap-2">
-                <div className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </div>
-                <span
-                  className="text-[12px] font-medium text-white/40"
-                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
-                >
-                  12,000+ learners online now
-                </span>
-              </div>
+           
+                
+              
             </div>
 
           </div>

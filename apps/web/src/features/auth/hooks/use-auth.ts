@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { authApi, type LoginPayload, type RegisterPayload } from "../api";
+import { toast } from "sonner";
+import { authApi, type LoginPayload, type RegisterPayload, type ForgotPasswordPayload } from "../api";
 
 export const AUTH_QUERY_KEY = ["auth", "me"] as const;
 
@@ -32,8 +33,15 @@ export function useRegister() {
   return useMutation({
     mutationFn: (payload: RegisterPayload) => authApi.register(payload),
     onSuccess: () => {
+      toast.success("Account created! Please sign in.");
       router.push("/login");
     },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (payload: ForgotPasswordPayload) => authApi.forgotPassword(payload),
   });
 }
 

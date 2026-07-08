@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
     SECRET_KEY: str = "change-me-in-production"
+    APTOS_NODE_URL: str = "https://fullnode.devnet.aptoslabs.com/v1"
+    APTOS_PRIVATE_KEY: str = ""
+    APTOS_MODULE_ADDRESS: str = ""
 
     class Config:
         env_file = ".env"
