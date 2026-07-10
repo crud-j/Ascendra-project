@@ -142,6 +142,7 @@ function AICanvas() {
         
         {/* Message 1: User 1 */}
         <motion.g
+          initial={{ opacity: 0 }}
           animate={!prefersReducedMotion ? { opacity: [0, 1, 1, 0], y: [20, 10, 10, -10] } : { opacity: 1, y: 10 }}
           transition={{ ...transitionSettings, times: [0, 0.05, 0.85, 0.95] }}
           style={{ willChange: "transform, opacity" }}
@@ -153,6 +154,7 @@ function AICanvas() {
 
         {/* Message 2: AI Response */}
         <motion.g
+           initial={{ opacity: 0 }}
            animate={!prefersReducedMotion ? { opacity: [0, 0, 1, 1, 0], y: [45, 45, 35, 35, 15] } : { opacity: 1, y: 35 }}
            transition={{ ...transitionSettings, times: [0, 0.15, 0.2, 0.85, 0.95] }}
            style={{ willChange: "transform, opacity" }}
@@ -164,6 +166,7 @@ function AICanvas() {
 
         {/* Message 3: User 2 */}
         <motion.g
+           initial={{ opacity: 0 }}
            animate={!prefersReducedMotion ? { opacity: [0, 0, 1, 1, 0], y: [70, 70, 60, 60, 40] } : { opacity: 1, y: 60 }}
            transition={{ ...transitionSettings, times: [0, 0.35, 0.4, 0.85, 0.95] }}
            style={{ willChange: "transform, opacity" }}
@@ -175,6 +178,7 @@ function AICanvas() {
 
         {/* Message 4: Final AI Response */}
         <motion.g
+           initial={{ opacity: 0 }}
            animate={!prefersReducedMotion ? { opacity: [0, 0, 1, 1, 0], y: [95, 95, 85, 85, 65] } : { opacity: 1, y: 85 }}
            transition={{ ...transitionSettings, times: [0, 0.55, 0.6, 0.85, 0.95] }}
            style={{ willChange: "transform, opacity" }}
@@ -209,9 +213,9 @@ function BlockchainCanvas() {
            <rect x="5" y="30" width="25" height="10" rx="2" fill="#27272A" />
            <rect x="5" y="50" width="25" height="10" rx="2" fill="#27272A" />
            {/* Blinking LEDs */}
-           <motion.circle cx="24" cy="15" r="1.5" fill="#3B82F6" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1, repeat: Infinity }} />
-           <motion.circle cx="24" cy="35" r="1.5" fill="#F59E0B" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }} />
-           <motion.circle cx="24" cy="55" r="1.5" fill="#10B981" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }} />
+           <motion.circle cx="24" cy="15" r="1.5" fill="#3B82F6" initial={{ opacity: 1 }} animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1, repeat: Infinity }} />
+           <motion.circle cx="24" cy="35" r="1.5" fill="#F59E0B" initial={{ opacity: 1 }} animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }} />
+           <motion.circle cx="24" cy="55" r="1.5" fill="#10B981" initial={{ opacity: 1 }} animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }} />
         </g>
 
         {/* Secure Folder & Files (Center-Left) */}
@@ -295,6 +299,7 @@ function CybersecurityCanvas() {
 
         {/* Threat Alert Bubble 1 (Appears, pulses, resolves to green, fades) */}
         <motion.g
+          initial={{ opacity: 0 }}
           animate={!prefersReducedMotion ? { opacity: [0, 1, 1, 1, 0], scale: [0.9, 1, 1.05, 1, 0.9], y: [75, 65, 65, 65, 75] } : { opacity: 0 }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", times: [0, 0.1, 0.5, 0.9, 1] }}
           style={{ willChange: "transform, opacity", transformOrigin: "80px 70px" }}
@@ -308,6 +313,7 @@ function CybersecurityCanvas() {
 
         {/* Threat Alert Bubble 2 (Offset Timing) */}
         <motion.g
+          initial={{ opacity: 0 }}
           animate={!prefersReducedMotion ? { opacity: [0, 0, 1, 1, 1, 0], scale: [0.9, 0.9, 1, 1.05, 1, 0.9], y: [55, 55, 45, 45, 45, 55] } : { opacity: 0 }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", times: [0, 0.3, 0.4, 0.7, 0.9, 1] }}
           style={{ willChange: "transform, opacity", transformOrigin: "110px 60px" }}

@@ -11,11 +11,15 @@ function Inline({ nodes }: { nodes: InlineNode[] }) {
     <>
       {nodes.map((n, i) => {
         if (n.type === "code")
-          return <code key={i} className="rounded bg-white/10 px-1.5 py-0.5 text-[11px] font-mono text-amber-300">{n.text}</code>;
+          return (
+            <code key={i} className="rounded-md bg-white/[0.08] px-1.5 py-0.5 text-[12.5px] font-mono text-amber-300 ring-1 ring-inset ring-white/[0.06]">
+              {n.text}
+            </code>
+          );
         if (n.type === "bold")
           return <strong key={i} className="font-semibold text-white">{n.text}</strong>;
         if (n.type === "em")
-          return <em key={i} className="italic text-white/80">{n.text}</em>;
+          return <em key={i} className="italic text-white/60">{n.text}</em>;
         return <span key={i}>{n.text}</span>;
       })}
     </>
@@ -25,31 +29,36 @@ function Inline({ nodes }: { nodes: InlineNode[] }) {
 /** Renders a single block-level AST node. */
 function Block({ node, idx }: { node: MarkdownNode; idx: number }) {
   if (node.type === "heading") {
-    const cls: Record<number, string> = {
-      1: "mt-2 mb-2 text-[17px] font-bold text-white",
-      2: "mt-5 mb-2 text-[15px] font-bold text-white",
-      3: "mt-4 mb-1.5 text-[13px] font-bold text-white",
+    const styles: Record<number, string> = {
+      1: "mt-6 mb-3 text-[19px] font-bold leading-snug tracking-tight text-white",
+      2: "mt-5 mb-2.5 text-[16px] font-bold leading-snug text-white",
+      3: "mt-4 mb-2 text-[14px] font-semibold text-white/90",
     };
     const Tag = `h${node.level}` as "h1" | "h2" | "h3";
-    return <Tag key={idx} className={cls[node.level]}><Inline nodes={node.inline} /></Tag>;
+    return <Tag className={styles[node.level]}><Inline nodes={node.inline} /></Tag>;
   }
 
   if (node.type === "paragraph")
-    return <p key={idx} className="text-[13px] leading-relaxed text-white/70"><Inline nodes={node.inline} /></p>;
+    return (
+      <p className="text-[14px] leading-[1.8] text-white/65">
+        <Inline nodes={node.inline} />
+      </p>
+    );
 
   if (node.type === "codeblock")
     return (
-      <pre key={idx} className="my-3 overflow-x-auto rounded-lg border border-white/10 bg-[#1e293b] p-3 text-[12px] text-amber-200 leading-relaxed">
+      <pre className="my-4 overflow-x-auto rounded-xl border border-white/[0.08] bg-[#111827] p-4 text-[12.5px] text-amber-200 leading-relaxed shadow-inner">
         <code>{node.code}</code>
       </pre>
     );
 
   if (node.type === "list")
     return (
-      <ul key={idx}>
+      <ul className="my-1 space-y-1.5 pl-1">
         {node.items.map((item, ii) => (
-          <li key={ii} className="ml-4 list-disc text-[12px] text-white/70 leading-relaxed marker:text-white/30">
-            <Inline nodes={item} />
+          <li key={ii} className="flex items-start gap-2.5 text-[13.5px] leading-[1.75] text-white/65">
+            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#C19562]/60" />
+            <span><Inline nodes={item} /></span>
           </li>
         ))}
       </ul>
@@ -57,22 +66,24 @@ function Block({ node, idx }: { node: MarkdownNode; idx: number }) {
 
   if (node.type === "table")
     return (
-      <div key={idx} className="my-3 overflow-x-auto rounded-lg border border-white/10">
-        <table className="w-full text-[12px]">
+      <div className="my-4 overflow-x-auto rounded-xl border border-white/[0.08]">
+        <table className="w-full text-[13px]">
           {node.headers.length > 0 && (
             <thead>
               <tr>
                 {node.headers.map((h, hi) => (
-                  <th key={hi} className="border-b border-white/10 bg-white/5 px-3 py-2 text-left font-semibold text-white/80">{h}</th>
+                  <th key={hi} className="border-b border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wider text-white/40">
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
           )}
           <tbody>
             {node.rows.map((row, ri) => (
-              <tr key={ri}>
+              <tr key={ri} className="border-b border-white/[0.04] last:border-0">
                 {row.map((cell, ci) => (
-                  <td key={ci} className="border-b border-white/5 px-3 py-2 text-white/60">{cell}</td>
+                  <td key={ci} className="px-4 py-2.5 text-white/55">{cell}</td>
                 ))}
               </tr>
             ))}
@@ -82,7 +93,7 @@ function Block({ node, idx }: { node: MarkdownNode; idx: number }) {
     );
 
   if (node.type === "spacer")
-    return <div key={idx} className="h-1.5" />;
+    return <div className="h-2" />;
 
   return null;
 }
@@ -107,8 +118,6 @@ export function WorkerMarkdown({ content }: WorkerMarkdownProps) {
         if (!cancelled) setNodes(parsed);
       })
       .catch((err) => {
-        // WorkerTerminatedError is expected when the component unmounts
-        // mid-parse (e.g. lesson navigation). All other errors are real.
         if (!(err instanceof WorkerTerminatedError)) {
           console.error("Markdown worker error:", err);
         }
@@ -118,16 +127,16 @@ export function WorkerMarkdown({ content }: WorkerMarkdownProps) {
 
   if (nodes === null) {
     return (
-      <div className="space-y-2 animate-pulse">
-        {[90, 70, 80, 60, 75].map((w, i) => (
-          <div key={i} className="h-3 rounded bg-white/10" style={{ width: `${w}%` }} />
+      <div className="space-y-3 animate-pulse">
+        {[88, 72, 95, 65, 80, 55, 70].map((w, i) => (
+          <div key={i} className="h-3 rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-1">
       {nodes.map((node, i) => <Block key={i} node={node} idx={i} />)}
     </div>
   );

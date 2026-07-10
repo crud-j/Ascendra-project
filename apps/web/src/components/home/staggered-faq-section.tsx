@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useDataWorker } from "@/hooks/use-data-worker";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -68,6 +69,26 @@ export default function StaggeredFAQSection({
   defaultOpen,
 }: StaggeredFAQProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const [query, setQuery] = useState("");
+  const [filteredItems, setFilteredItems] = useState<FAQItem[]>(faqItems);
+  const { search } = useDataWorker();
+
+  const handleSearch = useCallback(
+    async (q: string) => {
+      if (!q.trim()) {
+        setFilteredItems(faqItems);
+        return;
+      }
+      const { items } = await search(faqItems as unknown as Record<string, unknown>[], q, ["question", "answer"]);
+      setFilteredItems(items as unknown as FAQItem[]);
+    },
+    [faqItems, search]
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => handleSearch(query), 200);
+    return () => clearTimeout(timer);
+  }, [query, handleSearch]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -163,6 +184,24 @@ export default function StaggeredFAQSection({
               >
                 {subtitle}
               </p>
+
+              {/* FAQ Search (uses data web worker off-thread) */}
+              <div className="mt-8 relative">
+                <svg
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/25"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+                </svg>
+                <input
+                  type="search"
+                  placeholder="Search questions..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full rounded-none border border-dashed border-white/[0.09] bg-white/[0.02] pl-10 pr-4 py-2.5 text-[13px] text-white/70 placeholder:text-white/20 outline-none transition-colors duration-200 focus:border-[#C19562]/40 focus:bg-white/[0.04]"
+                  style={{ fontFamily: "var(--font-plus-jakarta)" }}
+                />
+              </div>
             </div>
 
             {/* Support card */}
@@ -223,12 +262,20 @@ export default function StaggeredFAQSection({
 
           {/* ── Accordion (right column) ── */}
           <div className="flex flex-col justify-center md:col-span-7 lg:col-span-7">
+            {filteredItems.length === 0 && (
+              <p
+                className="text-[13px] text-white/30 py-8"
+                style={{ fontFamily: "var(--font-plus-jakarta)" }}
+              >
+                No questions match &quot;{query}&quot;.
+              </p>
+            )}
             <Accordion
               multiple={false}
               defaultValue={defaultOpen ? [defaultOpen] : undefined}
               className="flex flex-col gap-5"
             >
-              {faqItems.map((item) => (
+              {filteredItems.map((item) => (
                 <AccordionItem
                   key={item.id}
                   value={item.id}

@@ -81,9 +81,9 @@ export function SiteFooter() {
                 <Image
                   src="/AscendraIconLogo.svg"
                   alt="Ascendra"
-                  width={100}
-                  height={28}
-                  style={{ height: 28, width: "auto", filter: "brightness(0) invert(1)" }}
+                  width={3843}
+                  height={1021}
+                  style={{ height: "28px", width: "auto", filter: "brightness(0) invert(1)" }}
                 />
               </div>
 

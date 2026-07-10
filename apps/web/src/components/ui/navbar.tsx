@@ -288,8 +288,8 @@ export function AscendraNavbar() {
           <Image
             src="/AscendraIconLogo.svg"
             alt="Ascendra"
-            width={100}
-            height={28}
+            width={3843}
+            height={1021}
             style={{
               height: "28px",
               width: "auto",
@@ -318,7 +318,7 @@ export function AscendraNavbar() {
                     )}>
                       <div className="absolute -top-12 -left-12 h-40 w-40 rounded-full bg-[#C19562] opacity-10 blur-[40px]" />
                       <div className="relative z-10">
-                        <Image src="/AscendraIconLogo.svg" alt="" width={100} height={28} style={{ height: 22, width: "auto", filter: isLight ? "brightness(0)" : "brightness(0) invert(1)" }} className="opacity-90" />
+                        <Image src="/AscendraIconLogo.svg" alt="" width={3843} height={1021} style={{ height: "22px", width: "auto", filter: isLight ? "brightness(0)" : "brightness(0) invert(1)" }} className="opacity-90" />
                         <h3 className={cn("mt-5 text-lg font-semibold", isLight ? "text-gray-800" : isJourney ? "text-[#D4EDF8]/90" : "text-white/90")}>
                           Ascendra Ecosystem
                         </h3>

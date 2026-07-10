@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Bell, LogOut, User as UserIcon } from "lucide-react";
+import { Bell, LogOut, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,11 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EconomyBar } from "./economy-bar";
-import { useUIStore } from "@/store/ui-store";
 import { useCurrentUser, useLogout } from "@/features/auth/hooks/use-auth";
 
 export function Navbar() {
-  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const { data: user } = useCurrentUser();
   const logout = useLogout();
 
@@ -29,16 +27,6 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-3 border-b bg-background px-4 shadow-sm">
-      {/* Sidebar toggle */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={toggleSidebar}
-        aria-label="Toggle sidebar"
-      >
-        <Menu className="h-5 w-5" />
-      </Button>
-
       {/* Logo */}
       <Link href="/" className="mr-4 text-lg font-bold tracking-tight">
         Ascendra

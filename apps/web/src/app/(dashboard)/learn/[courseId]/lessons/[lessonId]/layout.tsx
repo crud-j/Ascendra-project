@@ -1,9 +1,6 @@
 /**
  * Lesson player layout.
- *
- * Cancels the parent MainContent's p-6 padding so the IDE fills the full
- * available area. The sidebar margin shift is handled by MainContent reacting
- * to Zustand — no extra work needed here.
+ * Cancels the parent layout's p-6 padding so the IDE fills the full viewport.
  */
 export default function LessonLayout({ children }: { children: React.ReactNode }) {
   return (

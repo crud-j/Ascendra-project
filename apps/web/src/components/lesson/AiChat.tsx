@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { AiChatMarkdown } from "@/components/lesson/AiChatMarkdown";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -173,34 +172,8 @@ export function AiChat({ lessonTitle, lessonContext, currentCode }: AiChatProps)
                   )}
                 </span>
               ) : (
-                /* Completed: parse markdown in React (react-markdown runs once) */
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    p:    ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                    h1:   ({ children }) => <h1 className="mb-2 mt-3 text-[15px] font-bold text-gray-900">{children}</h1>,
-                    h2:   ({ children }) => <h2 className="mb-2 mt-3 text-[14px] font-bold text-gray-900">{children}</h2>,
-                    h3:   ({ children }) => <h3 className="mb-1 mt-2 text-[13px] font-semibold text-gray-800">{children}</h3>,
-                    ul:   ({ children }) => <ul className="mb-2 ml-4 list-disc space-y-0.5">{children}</ul>,
-                    ol:   ({ children }) => <ol className="mb-2 ml-4 list-decimal space-y-0.5">{children}</ol>,
-                    li:   ({ children }) => <li className="text-gray-700">{children}</li>,
-                    code: ({ children, className }) => {
-                      const isBlock = className?.startsWith("language-");
-                      return isBlock ? (
-                        <code className="block overflow-x-auto rounded-lg bg-gray-900 p-3 text-[11px] text-amber-200 leading-relaxed">{children}</code>
-                      ) : (
-                        <code className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] font-mono text-gray-800">{children}</code>
-                      );
-                    },
-                    pre:    ({ children }) => <pre className="my-2 overflow-x-auto rounded-lg bg-gray-900 p-3">{children}</pre>,
-                    strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-                    blockquote: ({ children }) => (
-                      <blockquote className="my-2 border-l-2 border-[#C19562] pl-3 text-gray-600 italic">{children}</blockquote>
-                    ),
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
+                /* Completed: parse markdown in a background worker */
+                <AiChatMarkdown content={msg.content} />
               )}
             </div>
           </div>

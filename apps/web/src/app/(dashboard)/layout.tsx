@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/shared/navbar";
-import { Sidebar } from "@/components/shared/sidebar";
-import { MainContent } from "@/components/shared/main-content";
+import { FloatingNav } from "@/components/shared/floating-nav";
 
 export default function DashboardLayout({
   children,
@@ -10,10 +9,10 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="flex">
-        <Sidebar />
-        <MainContent>{children}</MainContent>
-      </div>
+      <main className="min-h-[calc(100vh-3.5rem)] p-6">
+        {children}
+      </main>
+      <FloatingNav />
     </div>
   );
 }
